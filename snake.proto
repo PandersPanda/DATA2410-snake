@@ -1,0 +1,31 @@
+syntax="proto3";
+
+message Point {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message Snake {
+  string name = 1;
+  string color = 2;
+  int32 size = 3;
+  string direction = 4;
+  repeated Point body = 5;
+}
+
+message Food {
+  string color = 1;
+  Point position = 2;
+}
+
+service SnakeGameService {
+  //Functions for the game:
+  rpc addSnake(Snake) returns (Snake) {}
+  rpc locateOtherSnakes(Snake) returns (stream Snake) {}
+  rpc spawnFood(Point) returns (Food) {}
+
+  //Functions for controlling snakes:
+  rpc moveSnake(Snake) returns (Snake) {}
+  rpc eatFood(Snake) returns (Snake) {}
+  rpc deadSnake(Snake) returns (Snake) {}
+}
