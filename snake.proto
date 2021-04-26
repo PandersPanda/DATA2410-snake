@@ -6,26 +6,22 @@ message Point {
 }
 
 message Snake {
-  string name = 1;
-  string color = 2;
-  int32 size = 3;
-  string direction = 4;
-  repeated Point body = 5;
-}
-
-message Food {
   string color = 1;
-  Point position = 2;
+  string direction = 2;
+  repeated Point body = 3;
 }
 
-service SnakeGameService {
-  //Functions for the game:
-  rpc addSnake(Snake) returns (Snake) {}
-  rpc locateOtherSnakes(Snake) returns (stream Snake) {}
-  rpc spawnFood(Point) returns (Food) {}
+message JoinRequest {}
 
-  //Functions for controlling snakes:
-  rpc moveSnake(Snake) returns (Snake) {}
-  rpc eatFood(Snake) returns (Snake) {}
-  rpc deadSnake(Snake) returns (Snake) {}
+message MoveRequest {
+  string color = 1;
+  string direction = 2;
+}
+
+message GetRequest {}
+
+service SnakeService {
+  rpc addSnake (JoinRequest) returns (Snake) {}
+  rpc moveSnake (MoveRequest) returns (Snake) {}
+  rpc getSnakes (GetRequest) returns (stream Snake){}
 }
