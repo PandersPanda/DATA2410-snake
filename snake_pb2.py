@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"[\n\x05Snake\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63olor\x18\x02 \x01(\t\x12\x0c\n\x04size\x18\x03 \x01(\x05\x12\x11\n\tdirection\x18\x04 \x01(\t\x12\x14\n\x04\x62ody\x18\x05 \x03(\x0b\x32\x06.Point\"/\n\x04\x46ood\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x18\n\x08position\x18\x02 \x01(\x0b\x32\x06.Point2\xd2\x01\n\x10SnakeGameService\x12\x1c\n\x08\x61\x64\x64Snake\x12\x06.Snake\x1a\x06.Snake\"\x00\x12\'\n\x11locateOtherSnakes\x12\x06.Snake\x1a\x06.Snake\"\x00\x30\x01\x12\x1c\n\tspawnFood\x12\x06.Point\x1a\x05.Food\"\x00\x12\x1d\n\tmoveSnake\x12\x06.Snake\x1a\x06.Snake\"\x00\x12\x1b\n\x07\x65\x61tFood\x12\x06.Snake\x1a\x06.Snake\"\x00\x12\x1d\n\tdeadSnake\x12\x06.Snake\x1a\x06.Snake\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"\x0c\n\nGetRequest2}\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x62\x06proto3'
 )
 
 
@@ -73,36 +73,22 @@ _SNAKE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='Snake.name', index=0,
+      name='color', full_name='Snake.color', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='color', full_name='Snake.color', index=1,
+      name='direction', full_name='Snake.direction', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='size', full_name='Snake.size', index=2,
-      number=3, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='direction', full_name='Snake.direction', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='body', full_name='Snake.body', index=4,
-      number=5, type=11, cpp_type=10, label=3,
+      name='body', full_name='Snake.body', index=2,
+      number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -120,29 +106,54 @@ _SNAKE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=46,
-  serialized_end=137,
+  serialized_end=109,
 )
 
 
-_FOOD = _descriptor.Descriptor(
-  name='Food',
-  full_name='Food',
+_JOINREQUEST = _descriptor.Descriptor(
+  name='JoinRequest',
+  full_name='JoinRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=111,
+  serialized_end=124,
+)
+
+
+_MOVEREQUEST = _descriptor.Descriptor(
+  name='MoveRequest',
+  full_name='MoveRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='color', full_name='Food.color', index=0,
+      name='color', full_name='MoveRequest.color', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='position', full_name='Food.position', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      name='direction', full_name='MoveRequest.direction', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -158,15 +169,41 @@ _FOOD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=139,
-  serialized_end=186,
+  serialized_start=126,
+  serialized_end=173,
+)
+
+
+_GETREQUEST = _descriptor.Descriptor(
+  name='GetRequest',
+  full_name='GetRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=175,
+  serialized_end=187,
 )
 
 _SNAKE.fields_by_name['body'].message_type = _POINT
-_FOOD.fields_by_name['position'].message_type = _POINT
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['Snake'] = _SNAKE
-DESCRIPTOR.message_types_by_name['Food'] = _FOOD
+DESCRIPTOR.message_types_by_name['JoinRequest'] = _JOINREQUEST
+DESCRIPTOR.message_types_by_name['MoveRequest'] = _MOVEREQUEST
+DESCRIPTOR.message_types_by_name['GetRequest'] = _GETREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Point = _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), {
@@ -183,88 +220,72 @@ Snake = _reflection.GeneratedProtocolMessageType('Snake', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Snake)
 
-Food = _reflection.GeneratedProtocolMessageType('Food', (_message.Message,), {
-  'DESCRIPTOR' : _FOOD,
+JoinRequest = _reflection.GeneratedProtocolMessageType('JoinRequest', (_message.Message,), {
+  'DESCRIPTOR' : _JOINREQUEST,
   '__module__' : 'snake_pb2'
-  # @@protoc_insertion_point(class_scope:Food)
+  # @@protoc_insertion_point(class_scope:JoinRequest)
   })
-_sym_db.RegisterMessage(Food)
+_sym_db.RegisterMessage(JoinRequest)
+
+MoveRequest = _reflection.GeneratedProtocolMessageType('MoveRequest', (_message.Message,), {
+  'DESCRIPTOR' : _MOVEREQUEST,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:MoveRequest)
+  })
+_sym_db.RegisterMessage(MoveRequest)
+
+GetRequest = _reflection.GeneratedProtocolMessageType('GetRequest', (_message.Message,), {
+  'DESCRIPTOR' : _GETREQUEST,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:GetRequest)
+  })
+_sym_db.RegisterMessage(GetRequest)
 
 
 
-_SNAKEGAMESERVICE = _descriptor.ServiceDescriptor(
-  name='SnakeGameService',
-  full_name='SnakeGameService',
+_SNAKESERVICE = _descriptor.ServiceDescriptor(
+  name='SnakeService',
+  full_name='SnakeService',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=189,
-  serialized_end=399,
+  serialized_end=314,
   methods=[
   _descriptor.MethodDescriptor(
     name='addSnake',
-    full_name='SnakeGameService.addSnake',
+    full_name='SnakeService.addSnake',
     index=0,
     containing_service=None,
-    input_type=_SNAKE,
+    input_type=_JOINREQUEST,
     output_type=_SNAKE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='locateOtherSnakes',
-    full_name='SnakeGameService.locateOtherSnakes',
-    index=1,
-    containing_service=None,
-    input_type=_SNAKE,
-    output_type=_SNAKE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='spawnFood',
-    full_name='SnakeGameService.spawnFood',
-    index=2,
-    containing_service=None,
-    input_type=_POINT,
-    output_type=_FOOD,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='moveSnake',
-    full_name='SnakeGameService.moveSnake',
-    index=3,
+    full_name='SnakeService.moveSnake',
+    index=1,
     containing_service=None,
-    input_type=_SNAKE,
+    input_type=_MOVEREQUEST,
     output_type=_SNAKE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='eatFood',
-    full_name='SnakeGameService.eatFood',
-    index=4,
+    name='getSnakes',
+    full_name='SnakeService.getSnakes',
+    index=2,
     containing_service=None,
-    input_type=_SNAKE,
-    output_type=_SNAKE,
-    serialized_options=None,
-    create_key=_descriptor._internal_create_key,
-  ),
-  _descriptor.MethodDescriptor(
-    name='deadSnake',
-    full_name='SnakeGameService.deadSnake',
-    index=5,
-    containing_service=None,
-    input_type=_SNAKE,
+    input_type=_GETREQUEST,
     output_type=_SNAKE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
 ])
-_sym_db.RegisterServiceDescriptor(_SNAKEGAMESERVICE)
+_sym_db.RegisterServiceDescriptor(_SNAKESERVICE)
 
-DESCRIPTOR.services_by_name['SnakeGameService'] = _SNAKEGAMESERVICE
+DESCRIPTOR.services_by_name['SnakeService'] = _SNAKESERVICE
 
 # @@protoc_insertion_point(module_scope)

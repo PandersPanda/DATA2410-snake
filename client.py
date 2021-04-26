@@ -2,6 +2,7 @@ import tkinter
 import grpc
 import snake_pb2
 import snake_pb2_grpc
+import time
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50

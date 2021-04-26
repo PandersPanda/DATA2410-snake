@@ -1,3 +1,6 @@
+import snake_pb2
+
+
 class Snake:
     def __init__(self, color):
         self.color = color
