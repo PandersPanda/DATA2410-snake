@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"\x0c\n\nGetRequest2}\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x62\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest2\xa0\x01\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12!\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x62\x06proto3'
 )
 
 
@@ -198,12 +198,38 @@ _GETREQUEST = _descriptor.Descriptor(
   serialized_end=187,
 )
 
+
+_FOODREQUEST = _descriptor.Descriptor(
+  name='FoodRequest',
+  full_name='FoodRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=189,
+  serialized_end=202,
+)
+
 _SNAKE.fields_by_name['body'].message_type = _POINT
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['Snake'] = _SNAKE
 DESCRIPTOR.message_types_by_name['JoinRequest'] = _JOINREQUEST
 DESCRIPTOR.message_types_by_name['MoveRequest'] = _MOVEREQUEST
 DESCRIPTOR.message_types_by_name['GetRequest'] = _GETREQUEST
+DESCRIPTOR.message_types_by_name['FoodRequest'] = _FOODREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Point = _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), {
@@ -241,6 +267,13 @@ GetRequest = _reflection.GeneratedProtocolMessageType('GetRequest', (_message.Me
   })
 _sym_db.RegisterMessage(GetRequest)
 
+FoodRequest = _reflection.GeneratedProtocolMessageType('FoodRequest', (_message.Message,), {
+  'DESCRIPTOR' : _FOODREQUEST,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:FoodRequest)
+  })
+_sym_db.RegisterMessage(FoodRequest)
+
 
 
 _SNAKESERVICE = _descriptor.ServiceDescriptor(
@@ -250,8 +283,8 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=189,
-  serialized_end=314,
+  serialized_start=205,
+  serialized_end=365,
   methods=[
   _descriptor.MethodDescriptor(
     name='addSnake',
@@ -280,6 +313,16 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_GETREQUEST,
     output_type=_SNAKE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='getFood',
+    full_name='SnakeService.getFood',
+    index=3,
+    containing_service=None,
+    input_type=_FOODREQUEST,
+    output_type=_POINT,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

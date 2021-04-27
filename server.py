@@ -7,6 +7,7 @@ import random
 
 class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
     SNAKES = {}
+    FOODS = []
     AVAILABLE_COLORS = ['Blue', 'Red']
     DIRECTIONS = {
         'Right': 1,
@@ -76,6 +77,22 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
     def getSnakes(self, request, context):
         for snake in self.SNAKES.values():
             yield snake
+
+    def getFood(self, request, context):
+        if len(self.FOODS) == 0:
+            x, y = random.randint(0, 30), random.randint(0, 31)
+            snakes = []
+            for snake in self.SNAKES.values():
+                snakes.extend(snake.body)
+
+            p = Point(x=x, y=y)
+            while p in snakes:
+                x, y = random.randint(0, 30), random.randint(0, 31)
+                p = Point(x=x, y=y)
+
+            self.FOODS.append(p)
+
+        return self.FOODS[0]
 
 
 def serve():

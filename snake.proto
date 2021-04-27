@@ -19,9 +19,11 @@ message MoveRequest {
 }
 
 message GetRequest {}
+message FoodRequest {}
 
 service SnakeService {
   rpc addSnake (JoinRequest) returns (Snake) {}
   rpc moveSnake (MoveRequest) returns (Snake) {}
   rpc getSnakes (GetRequest) returns (stream Snake){}
+  rpc getFood (FoodRequest) returns (Point) {}
 }

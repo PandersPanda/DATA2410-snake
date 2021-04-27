@@ -18,7 +18,6 @@ canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness
 
 channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
-
 snake = stub.addSnake(snake_pb2.JoinRequest())
 direction = snake.direction
 
@@ -50,7 +49,7 @@ def change_direction(event):
     direction = event.keysym
 
 
-def draw_All_Snakes():
+def draw_all_Snakes():
     canvas.delete('snake')
     snakes = stub.getSnakes(snake_pb2.GetRequest())
     for s in snakes:
@@ -60,13 +59,18 @@ def draw_All_Snakes():
 canvas.bind_all('<Key>', change_direction)
 
 
+def spawn_food():
+    pass
+
+
 def game_flow():
     global snake
     move_snake()
-    draw_All_Snakes()
+    draw_all_Snakes()
     canvas.after(GAME_SPEED, game_flow)
 
 
 game_flow()
 canvas.pack()
 root.mainloop()
+
