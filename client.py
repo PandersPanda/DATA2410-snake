@@ -5,7 +5,6 @@ import snake_pb2
 import snake_pb2_grpc
 import time
 
-
 SNAKE_SIZE = 20
 GAME_SPEED = 50
 
@@ -36,6 +35,17 @@ def draw_snake(s):
         )
 
 
+def draw_food(f):
+    canvas.create_oval(
+        (f.x + 0.5 - 0.4) * SNAKE_SIZE,
+        (f.y + 0.5 - 0.4) * SNAKE_SIZE,
+        (f.x + 0.5 - 0.4) * SNAKE_SIZE,
+        (f.y + 0.5 - 0.4) * SNAKE_SIZE,
+        fill='White',
+        tag='food'
+    )
+
+
 draw_snake(snake)
 
 
@@ -48,7 +58,9 @@ def move_snake():
 
 def change_direction(event):
     global direction
-    direction = event.keysym
+    new_direction = event.keysym
+    if new_direction in ['Up', 'Down', 'Left', 'Right']:
+        direction = new_direction
 
 
 def check_collision():
