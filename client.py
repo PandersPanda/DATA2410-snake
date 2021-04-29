@@ -56,7 +56,8 @@ def check_collision():
     )
     return has_collided.has_collided
 
-def draw_all_Snakes():
+
+def draw_all_snakes():
     canvas.delete('snake')
     snakes = stub.getSnakes(snake_pb2.GetRequest())
     for s in snakes:
@@ -71,11 +72,10 @@ def game_flow():
     if check_collision():
         root.quit()
     move_snake()
-    draw_all_Snakes()
+    draw_all_snakes()
     canvas.after(GAME_SPEED, game_flow)
 
 
 game_flow()
 canvas.pack()
 root.mainloop()
-

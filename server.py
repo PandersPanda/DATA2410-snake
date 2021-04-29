@@ -1,5 +1,6 @@
 import grpc
 import snake_pb2_grpc
+import snake_pb2
 from snake_pb2 import Snake, Point
 from concurrent import futures
 import random
@@ -8,7 +9,7 @@ import random
 class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
     SNAKES = {}
     FOODS = []
-    AVAILABLE_COLORS = ['Blue', 'Red']
+    AVAILABLE_COLORS = ['Purple', 'Maroon1', 'Cyan2', 'Orange', 'Green', 'Yellow', 'Blue', 'Red']
     DIRECTIONS = {
         'Right': 1,
         'Left': -1,
@@ -112,7 +113,8 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
 
             self.FOODS.append(p)
 
-        return self.FOODS[0]
+        for food in self.FOODS:
+            yield food
 
 
 def serve():
