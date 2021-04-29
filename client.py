@@ -4,6 +4,7 @@ import grpc
 import snake_pb2
 import snake_pb2_grpc
 import time
+import threading
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50
@@ -12,12 +13,13 @@ GAME_WIDTH = 600
 GAME_HEIGHT = 620
 
 root = tkinter.Tk()
+root.geometry(f'{GAME_WIDTH}x{GAME_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
 canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background='black')
 
-channel = grpc.insecure_channel('localhost:50051')
+channel = grpc.insecure_channel('192.168.1.226:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 snake = stub.addSnake(snake_pb2.JoinRequest())
 direction = snake.direction
@@ -35,18 +37,19 @@ def draw_snake(s):
         )
 
 
-def draw_food(f):
+def draw_food(food, r, color):
+    assert 0 < r <= 1
+    assert 0 <= food.x < 30
+    assert 0 <= food.y < 31
+
     canvas.create_oval(
-        (f.x + 0.5 - 0.4) * SNAKE_SIZE,
-        (f.y + 0.5 - 0.4) * SNAKE_SIZE,
-        (f.x + 0.5 - 0.4) * SNAKE_SIZE,
-        (f.y + 0.5 - 0.4) * SNAKE_SIZE,
-        fill='White',
+        (food.x + .5 + r / 2) * SNAKE_SIZE,
+        (food.y + .5 + r / 2) * SNAKE_SIZE,
+        (food.x + .5 - r / 2) * SNAKE_SIZE,
+        (food.y + .5 - r / 2) * SNAKE_SIZE,
+        fill=color,
         tag='food'
     )
-
-
-draw_snake(snake)
 
 
 def move_snake():
@@ -87,6 +90,19 @@ def draw_all_snakes():
         draw_snake(s)
 
 
+def spawn_foods():
+    canvas.delete('food')
+    foods = stub.getFood(snake_pb2.FoodRequest())
+    for f in foods:
+        draw_food(food=f, r=0.5, color='White')
+
+
+def random_food():
+    while True:
+        stub.addMoreFood(snake_pb2.FoodRequest())
+        time.sleep(random.randint(5, 10))
+
+
 canvas.bind_all('<Key>', change_direction)
 
 
@@ -96,9 +112,19 @@ def game_flow():
     if check_collision():
         root.quit()
     draw_all_snakes()
+    spawn_foods()
     canvas.after(GAME_SPEED, game_flow)
 
 
-game_flow()
-canvas.pack()
+def start_game(event):
+    start.destroy()
+    canvas.pack()
+    game_flow()
+
+
+start = tkinter.Button(root, text="Start game")
+start.bind('<Button-1>', start_game)
+start.pack()
+random_food_thread = threading.Thread(target=random_food, daemon=True)
+random_food_thread.start()
 root.mainloop()

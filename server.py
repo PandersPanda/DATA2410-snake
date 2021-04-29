@@ -58,6 +58,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         # MoveRequest(color= ... , direction=...)
         new_direction = request.direction
         snake = self.SNAKES.get(request.color, None)
+
         opposite_direction = [{'Up', 'Down'}, {'Left', 'Right'}]
         if {snake.direction, new_direction} in opposite_direction:
             new_direction = snake.direction
@@ -65,11 +66,17 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         new_head = Point(x=snake.body[0].x, y=snake.body[0].y)
 
         if new_direction == "Right" or new_direction == 'Left':
-            new_head.x += self.DIRECTIONS.get(new_direction, 0)
+            new_head.x = (snake.body[0].x + self.DIRECTIONS.get(new_direction, 0)) % 30
         else:
-            new_head.y += self.DIRECTIONS.get(new_direction, 0)
+            new_head.y = (snake.body[0].y + self.DIRECTIONS.get(new_direction, 0)) % 31
 
-        snake.body.pop()
+        if new_head in self.FOODS:
+            self.FOODS.remove(new_head)
+            if len(self.FOODS) == 0:
+                self.add_food()
+        else:
+            snake.body.pop()
+
         snake.body.insert(0, new_head)
         snake.direction = new_direction
 
@@ -80,14 +87,8 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
         # Check border and self_snake:
-        if (
-                head_x in (-1, 30) or
-                head_y in (-1, 31) or
-                Point(x=head_x, y=head_y) in snake.body[1:]
-        ):
-            self.FOODS.append(random.choice(snake.body))
-            self.SNAKES.pop(request.color, None)
-            self.AVAILABLE_COLORS.append(request.color)
+        if Point(x=head_x, y=head_y) in snake.body[1:]:
+            self.turn_snake_to_food(snake)
             return snake_pb2.CollisionResponse(has_collided=True)  # return True
 
         other_snakes = self.SNAKES.copy()
@@ -96,9 +97,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         # Check for other snakes
         for s in other_snakes.values():
             if Point(x=head_x, y=head_y) in s.body:
-                self.FOODS.append(random.choice(snake.body))
-                self.SNAKES.pop(request.color, None)
-                self.AVAILABLE_COLORS.append(request.color)
+                self.turn_snake_to_food(snake)
                 return snake_pb2.CollisionResponse(has_collided=True)
 
         return snake_pb2.CollisionResponse(has_collided=False)  # Return False
@@ -109,20 +108,31 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
 
     def getFood(self, request, context):
         if len(self.FOODS) == 0:
-            x, y = random.randint(0, 30), random.randint(0, 31)
-            snakes = []
-            for snake in self.SNAKES.values():
-                snakes.extend(snake.body)
-
-            p = Point(x=x, y=y)
-            while p in snakes:
-                x, y = random.randint(0, 30), random.randint(0, 31)
-                p = Point(x=x, y=y)
-
-            self.FOODS.append(p)
-
+            self.add_food()
         for food in self.FOODS:
             yield food
+
+    def addMoreFood(self, request, context):
+        self.add_food()
+        return request
+
+    def add_food(self):
+        x, y = random.randint(0, 29), random.randint(0, 30)
+        snakes = []
+        for snake in self.SNAKES.values():
+            snakes.extend(snake.body)
+
+        p = Point(x=x, y=y)
+        while p in snakes:
+            x, y = random.randint(0, 29), random.randint(0, 30)
+            p = Point(x=x, y=y)
+
+        self.FOODS.append(p)
+
+    def turn_snake_to_food(self, snake):
+        self.FOODS.append(random.choice(snake.body))
+        self.SNAKES.pop(snake.color, None)
+        self.AVAILABLE_COLORS.append(snake.color)
 
 
 def serve():

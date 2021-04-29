@@ -33,5 +33,6 @@ service SnakeService {
   rpc moveSnake (MoveRequest) returns (Snake) {}
   rpc getSnakes (GetRequest) returns (stream Snake){}
   rpc getFood (FoodRequest) returns (stream Point) {}
+  rpc addMoreFood (FoodRequest) returns (FoodRequest) {}
   rpc checkCollision(CollisionRequest) returns (CollisionResponse){}
 }

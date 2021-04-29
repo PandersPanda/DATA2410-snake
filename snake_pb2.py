@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest2\xdd\x01\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest2\x8a\x02\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12+\n\x0b\x61\x64\x64MoreFood\x12\x0c.FoodRequest\x1a\x0c.FoodRequest\"\x00\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -364,7 +364,7 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=283,
-  serialized_end=504,
+  serialized_end=549,
   methods=[
   _descriptor.MethodDescriptor(
     name='addSnake',
@@ -407,9 +407,19 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
+    name='addMoreFood',
+    full_name='SnakeService.addMoreFood',
+    index=4,
+    containing_service=None,
+    input_type=_FOODREQUEST,
+    output_type=_FOODREQUEST,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
     name='checkCollision',
     full_name='SnakeService.checkCollision',
-    index=4,
+    index=5,
     containing_service=None,
     input_type=_COLLISIONREQUEST,
     output_type=_COLLISIONRESPONSE,
