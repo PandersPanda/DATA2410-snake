@@ -29,10 +29,15 @@ class SnakeServiceStub(object):
                 request_serializer=snake__pb2.GetRequest.SerializeToString,
                 response_deserializer=snake__pb2.Snake.FromString,
                 )
-        self.getFood = channel.unary_unary(
+        self.getFood = channel.unary_stream(
                 '/SnakeService/getFood',
                 request_serializer=snake__pb2.FoodRequest.SerializeToString,
                 response_deserializer=snake__pb2.Point.FromString,
+                )
+        self.checkCollision = channel.unary_unary(
+                '/SnakeService/checkCollision',
+                request_serializer=snake__pb2.CollisionRequest.SerializeToString,
+                response_deserializer=snake__pb2.CollisionResponse.FromString,
                 )
 
 
@@ -63,6 +68,12 @@ class SnakeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def checkCollision(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SnakeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -81,10 +92,15 @@ def add_SnakeServiceServicer_to_server(servicer, server):
                     request_deserializer=snake__pb2.GetRequest.FromString,
                     response_serializer=snake__pb2.Snake.SerializeToString,
             ),
-            'getFood': grpc.unary_unary_rpc_method_handler(
+            'getFood': grpc.unary_stream_rpc_method_handler(
                     servicer.getFood,
                     request_deserializer=snake__pb2.FoodRequest.FromString,
                     response_serializer=snake__pb2.Point.SerializeToString,
+            ),
+            'checkCollision': grpc.unary_unary_rpc_method_handler(
+                    servicer.checkCollision,
+                    request_deserializer=snake__pb2.CollisionRequest.FromString,
+                    response_serializer=snake__pb2.CollisionResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -158,8 +174,25 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/getFood',
+        return grpc.experimental.unary_stream(request, target, '/SnakeService/getFood',
             snake__pb2.FoodRequest.SerializeToString,
             snake__pb2.Point.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def checkCollision(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/checkCollision',
+            snake__pb2.CollisionRequest.SerializeToString,
+            snake__pb2.CollisionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

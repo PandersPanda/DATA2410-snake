@@ -1,3 +1,4 @@
+import random
 import tkinter
 import grpc
 import snake_pb2
@@ -57,10 +58,6 @@ def draw_all_Snakes():
 
 
 canvas.bind_all('<Key>', change_direction)
-
-
-def spawn_food():
-    pass
 
 
 def game_flow():

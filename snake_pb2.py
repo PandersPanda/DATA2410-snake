@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest2\xa0\x01\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12!\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"?\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest2\xdd\x01\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -174,6 +174,70 @@ _MOVEREQUEST = _descriptor.Descriptor(
 )
 
 
+_COLLISIONREQUEST = _descriptor.Descriptor(
+  name='CollisionRequest',
+  full_name='CollisionRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='color', full_name='CollisionRequest.color', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=175,
+  serialized_end=208,
+)
+
+
+_COLLISIONRESPONSE = _descriptor.Descriptor(
+  name='CollisionResponse',
+  full_name='CollisionResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='has_collided', full_name='CollisionResponse.has_collided', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=210,
+  serialized_end=251,
+)
+
+
 _GETREQUEST = _descriptor.Descriptor(
   name='GetRequest',
   full_name='GetRequest',
@@ -194,8 +258,8 @@ _GETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=175,
-  serialized_end=187,
+  serialized_start=253,
+  serialized_end=265,
 )
 
 
@@ -219,8 +283,8 @@ _FOODREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=189,
-  serialized_end=202,
+  serialized_start=267,
+  serialized_end=280,
 )
 
 _SNAKE.fields_by_name['body'].message_type = _POINT
@@ -228,6 +292,8 @@ DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['Snake'] = _SNAKE
 DESCRIPTOR.message_types_by_name['JoinRequest'] = _JOINREQUEST
 DESCRIPTOR.message_types_by_name['MoveRequest'] = _MOVEREQUEST
+DESCRIPTOR.message_types_by_name['CollisionRequest'] = _COLLISIONREQUEST
+DESCRIPTOR.message_types_by_name['CollisionResponse'] = _COLLISIONRESPONSE
 DESCRIPTOR.message_types_by_name['GetRequest'] = _GETREQUEST
 DESCRIPTOR.message_types_by_name['FoodRequest'] = _FOODREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -260,6 +326,20 @@ MoveRequest = _reflection.GeneratedProtocolMessageType('MoveRequest', (_message.
   })
 _sym_db.RegisterMessage(MoveRequest)
 
+CollisionRequest = _reflection.GeneratedProtocolMessageType('CollisionRequest', (_message.Message,), {
+  'DESCRIPTOR' : _COLLISIONREQUEST,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:CollisionRequest)
+  })
+_sym_db.RegisterMessage(CollisionRequest)
+
+CollisionResponse = _reflection.GeneratedProtocolMessageType('CollisionResponse', (_message.Message,), {
+  'DESCRIPTOR' : _COLLISIONRESPONSE,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:CollisionResponse)
+  })
+_sym_db.RegisterMessage(CollisionResponse)
+
 GetRequest = _reflection.GeneratedProtocolMessageType('GetRequest', (_message.Message,), {
   'DESCRIPTOR' : _GETREQUEST,
   '__module__' : 'snake_pb2'
@@ -283,8 +363,8 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=205,
-  serialized_end=365,
+  serialized_start=283,
+  serialized_end=504,
   methods=[
   _descriptor.MethodDescriptor(
     name='addSnake',
@@ -323,6 +403,16 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_FOODREQUEST,
     output_type=_POINT,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='checkCollision',
+    full_name='SnakeService.checkCollision',
+    index=4,
+    containing_service=None,
+    input_type=_COLLISIONREQUEST,
+    output_type=_COLLISIONRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
