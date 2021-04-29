@@ -1,10 +1,12 @@
+import random
 import tkinter
 import grpc
 import snake_pb2
 import snake_pb2_grpc
+import time
 
 SNAKE_SIZE = 20
-GAME_SPEED = 600
+GAME_SPEED = 50
 
 GAME_WIDTH = 600
 GAME_HEIGHT = 620
@@ -31,6 +33,17 @@ def draw_snake(s):
             fill=s.color,
             tag='snake'
         )
+
+
+def draw_food(f):
+    canvas.create_oval(
+        (f.x + 0.5 - 0.4) * SNAKE_SIZE,
+        (f.y + 0.5 - 0.4) * SNAKE_SIZE,
+        (f.x + 0.5 - 0.4) * SNAKE_SIZE,
+        (f.y + 0.5 - 0.4) * SNAKE_SIZE,
+        fill='White',
+        tag='food'
+    )
 
 
 draw_snake(snake)
