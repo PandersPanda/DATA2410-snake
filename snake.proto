@@ -18,6 +18,13 @@ message MoveRequest {
   string direction = 2;
 }
 
+message CollisionRequest{
+  string color = 1;
+}
+message CollisionResponse {
+  bool has_collided = 1;
+}
+
 message GetRequest {}
 message FoodRequest {}
 

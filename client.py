@@ -50,6 +50,12 @@ def change_direction(event):
     direction = event.keysym
 
 
+def check_collision():
+    has_collided = stub.checkCollision(
+        snake_pb2.CollisionRequest(color=snake.color)
+    )
+    return has_collided.has_collided
+
 def draw_all_Snakes():
     canvas.delete('snake')
     snakes = stub.getSnakes(snake_pb2.GetRequest())
@@ -62,6 +68,8 @@ canvas.bind_all('<Key>', change_direction)
 
 def game_flow():
     global snake
+    if check_collision():
+        root.quit()
     move_snake()
     draw_all_Snakes()
     canvas.after(GAME_SPEED, game_flow)
