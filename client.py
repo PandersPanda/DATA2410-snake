@@ -5,6 +5,7 @@ import snake_pb2
 import snake_pb2_grpc
 import time
 import threading
+import sys
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50
@@ -17,11 +18,16 @@ root.geometry(f'{GAME_WIDTH}x{GAME_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
-canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background='black')
+canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background='grey6')
 
 channel = grpc.insecure_channel('localhost:50051')
+
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
-snake = stub.addSnake(snake_pb2.JoinRequest())
+try:
+    snake = stub.addSnake(snake_pb2.JoinRequest())
+except grpc.RpcError:
+    print("This room is full of snakes!")
+    sys.exit()
 direction = snake.direction
 
 
@@ -42,7 +48,7 @@ def draw_food(food, r, color):
     assert 0 <= food.x < 30
     assert 0 <= food.y < 31
 
-    canvas.create_oval(
+    food = canvas.create_oval(
         (food.x + .5 + r / 2) * SNAKE_SIZE,
         (food.y + .5 + r / 2) * SNAKE_SIZE,
         (food.x + .5 - r / 2) * SNAKE_SIZE,
@@ -50,6 +56,7 @@ def draw_food(food, r, color):
         fill=color,
         tag='food'
     )
+    canvas.tag_lower(food)
 
 
 def move_snake():
@@ -117,14 +124,21 @@ def game_flow():
 
 
 def start_game(event):
-    start.destroy()
+    start_game_button.destroy()
     canvas.pack()
+    random_food_thread = threading.Thread(target=random_food, daemon=True)
+    random_food_thread.start()
     game_flow()
 
 
-start = tkinter.Button(root, text="Start game")
-start.bind('<Button-1>', start_game)
-start.pack()
-random_food_thread = threading.Thread(target=random_food, daemon=True)
-random_food_thread.start()
+def on_closing():
+    canvas.delete('all')
+    stub.removeSnake(snake)
+    root.quit()
+
+
+start_game_button = tkinter.Button(root, text="Start game")
+start_game_button.bind('<Button-1>', start_game)
+start_game_button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()

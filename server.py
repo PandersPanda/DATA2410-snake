@@ -54,6 +54,12 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         self.SNAKES.update({snake.color: snake})
         return snake
 
+    def removeSnake(self, request, context):
+        snake = self.SNAKES.pop(request.color, None)
+        if snake is not None:
+            self.AVAILABLE_COLORS.append(snake.color)
+        return request
+
     def moveSnake(self, request, context):
         # MoveRequest(color= ... , direction=...)
         new_direction = request.direction
