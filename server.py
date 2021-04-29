@@ -47,7 +47,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         body.append(Point(x=x, y=y))
 
         snake = Snake(
-            color='Red',
+            color=self.AVAILABLE_COLORS.pop(),
             direction=random.choice(directions),
             body=body
         )
@@ -80,7 +80,11 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
         # Check border and self_snake:
-        if head_x in (0, 30) or head_y in (0, 31) or Point(x=head_x, y=head_y) in snake.body[1:]:
+        if (
+                head_x in (-1, 30) or
+                head_y in (-1, 31) or
+                Point(x=head_x, y=head_y) in snake.body[1:]
+        ):
             self.FOODS.append(random.choice(snake.body))
             self.SNAKES.pop(request.color, None)
             self.AVAILABLE_COLORS.append(request.color)

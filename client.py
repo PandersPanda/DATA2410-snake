@@ -1,13 +1,10 @@
-import random
 import tkinter
 import grpc
 import snake_pb2
 import snake_pb2_grpc
-import time
-
 
 SNAKE_SIZE = 20
-GAME_SPEED = 50
+GAME_SPEED = 600
 
 GAME_WIDTH = 600
 GAME_HEIGHT = 620
@@ -48,7 +45,19 @@ def move_snake():
 
 def change_direction(event):
     global direction
-    direction = event.keysym
+    available_directions = {
+        'Up': 'Up',
+        'Down': 'Down',
+        'Left': 'Left',
+        'Right': 'Right',
+        'w': 'Up',
+        'a': 'Left',
+        's': 'Down',
+        'd': 'Right'
+    }
+    new_direction = available_directions.get(event.keysym, False)
+    if new_direction:
+        direction = new_direction
 
 
 def check_collision():
