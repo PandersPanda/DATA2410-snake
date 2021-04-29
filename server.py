@@ -82,6 +82,8 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         # Check border and self_snake:
         if head_x in (0, 30) or head_y in (0, 31) or Point(x=head_x, y=head_y) in snake.body[1:]:
             self.FOODS.append(random.choice(snake.body))
+            self.SNAKES.pop(request.color, None)
+            self.AVAILABLE_COLORS.append(request.color)
             return snake_pb2.CollisionResponse(has_collided=True)  # return True
 
         other_snakes = self.SNAKES.copy()
@@ -91,6 +93,8 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         for s in other_snakes.values():
             if Point(x=head_x, y=head_y) in s.body:
                 self.FOODS.append(random.choice(snake.body))
+                self.SNAKES.pop(request.color, None)
+                self.AVAILABLE_COLORS.append(request.color)
                 return snake_pb2.CollisionResponse(has_collided=True)
 
         return snake_pb2.CollisionResponse(has_collided=False)  # Return False

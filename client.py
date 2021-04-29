@@ -70,9 +70,9 @@ canvas.bind_all('<Key>', change_direction)
 
 def game_flow():
     global snake
+    move_snake()
     if check_collision():
         root.quit()
-    move_snake()
     draw_all_snakes()
     canvas.after(GAME_SPEED, game_flow)
 
