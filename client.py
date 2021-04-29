@@ -19,7 +19,7 @@ root.title("Snake Game")
 
 canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background='black')
 
-channel = grpc.insecure_channel('192.168.1.226:50051')
+channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 snake = stub.addSnake(snake_pb2.JoinRequest())
 direction = snake.direction
