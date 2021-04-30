@@ -153,14 +153,18 @@ def avoid_collision():
     moves.remove(opposite_direction())
     snakes = draw_all_snakes()
     snakes.remove(snake)
-    going_to_die = death_move(direction, snakes)
+    other_snakes = []
+    for s in snakes:
+        other_snakes.extend(s.body)
+
+    going_to_die = death_move(direction, other_snakes)
     new_direction = direction
     while going_to_die:
         if len(moves) == 0:
             break
         new_direction = random.choice(moves)
         moves.remove(new_direction)
-        going_to_die = death_move(new_direction, snakes)
+        going_to_die = death_move(new_direction, other_snakes)
 
     direction = new_direction
 
