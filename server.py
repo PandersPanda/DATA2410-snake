@@ -142,7 +142,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     snake_pb2_grpc.add_SnakeServiceServicer_to_server(
         SnakeGame(), server
     )

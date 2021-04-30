@@ -114,7 +114,7 @@ def spawn_foods():
 def random_food():
     while True:
         stub.addMoreFood(snake_pb2.FoodRequest())
-        time.sleep(random.randint(5, 10))
+        time.sleep(random.randint(2, 5))
 
 
 def update_score():
@@ -270,6 +270,6 @@ def on_closing():
 # start_game_button = tkinter.Button(root, text="Start game")
 # start_game_button.bind('<Button-1>', start_game)
 # start_game_button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
-# root.protocol("WM_DELETE_WINDOW", on_closing)
+root.protocol("WM_DELETE_WINDOW", on_closing)
 start_game()
 root.mainloop()

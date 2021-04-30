@@ -1,17 +1,15 @@
-import random
+directions = ['Left', 'Up', 'Right', 'Down']
 
-li = [0, 1, 2, 3, 4, 5, 6, 7]
+course = 'Right'
+dir_index = directions.index(course)
 
+x, y = 2, 3
 
-def stream_test():
-    for i in li:
-        yield i
+if dir_index % 2 == 0:
+    x += -1 if dir_index < 2 else 1
+else:
+    y += -1 if dir_index < 2 else 1
 
-
-s = stream_test()
-
-empty = []
-
-print(random.choice([]))
+print(x, y)
 
 
