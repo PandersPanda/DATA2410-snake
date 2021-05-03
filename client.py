@@ -268,9 +268,9 @@ def on_closing():
 
 
 start_game_button = tkinter.Button(root, text="Start game")
-start_game_button.bind('<Button-1>', start_game)
+start_game_button.bind('<Button-1>')
 start_game_button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
-start_game_button.configure(width=10, height=2, bg="red", font=("bold", 20))
+start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_game)
 root.protocol("WM_DELETE_WINDOW", on_closing)
 #start_game()
 root.mainloop()
