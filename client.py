@@ -20,7 +20,6 @@ root.title("Snake Game")
 
 canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background='grey6')
 
-
 channel = grpc.insecure_channel('localhost:50051')
 
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
@@ -86,10 +85,10 @@ def change_direction(event):
 
 
 def check_collision():
-    has_collided = stub.checkCollision(
+    collision = stub.checkCollision(
         snake_pb2.CollisionRequest(color=snake.color)
     )
-    return has_collided.has_collided
+    return collision.has_collided
 
 
 def draw_all_snakes():
@@ -272,9 +271,10 @@ def on_closing():
 start_game_button = tkinter.Button(root, text="Single player")
 multiplayer_button = tkinter.Button(root, text="Multiplayer")
 start_game_button.bind('<Button-1>', start_game)
+start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_game)
 multiplayer_button.bind('<Button-2>', start_game)
 start_game_button.place(x=260, y=250)
 multiplayer_button.place(x=260, y=300)
 root.protocol("WM_DELETE_WINDOW", on_closing)
-# start_game()
+start_game()
 root.mainloop()
