@@ -122,7 +122,6 @@ def update_score():
 
 
 def game_flow():
-    global snake
     move_snake()
     if check_collision():
         root.quit()
@@ -246,7 +245,7 @@ def bot_flow():
     canvas.after(GAME_SPEED, bot_flow)
 
 
-def start_game(event=None):
+def start_single_game(event=None):
     start_game_button.destroy()
     multiplayer_button.destroy()
     canvas.pack()
@@ -259,7 +258,24 @@ def start_game(event=None):
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
+
+    bot_snake = stub.addSnake
     game_flow()
+
+def start_multi_game(event=None):
+    start_game_button.destroy()
+    multiplayer_button.destroy()
+    canvas.pack()
+    canvas.create_text(
+        40, 15,
+        text=f"Score: {len(snake.body) - 3}",
+        fill=snake.color, tag='score',
+        font=('TkDefaultFont', 12)
+    )
+    random_food_thread = threading.Thread(target=random_food, daemon=True)
+    random_food_thread.start()
+    canvas.bind_all('<Key>', change_direction)
+    bot_flow()
 
 
 def on_closing():
@@ -271,8 +287,8 @@ def on_closing():
 start_game_button = tkinter.Button(root, text="Single player")
 multiplayer_button = tkinter.Button(root, text="Multiplayer")
 
-start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_game)
-multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_game)
+start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_single_game)
+multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_multi_game)
 
 start_game_button.place(x=220, y=200)
 multiplayer_button.place(x=220, y=350)
