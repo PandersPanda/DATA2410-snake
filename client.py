@@ -270,11 +270,12 @@ def on_closing():
 
 start_game_button = tkinter.Button(root, text="Single player")
 multiplayer_button = tkinter.Button(root, text="Multiplayer")
-start_game_button.bind('<Button-1>', start_game)
+
 start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_game)
-multiplayer_button.bind('<Button-2>', start_game)
-start_game_button.place(x=260, y=250)
-multiplayer_button.place(x=260, y=300)
+multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_game)
+
+start_game_button.place(x=220, y=200)
+multiplayer_button.place(x=220, y=350)
 root.protocol("WM_DELETE_WINDOW", on_closing)
-start_game()
+# start_game()
 root.mainloop()
