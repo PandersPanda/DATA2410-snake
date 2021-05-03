@@ -85,10 +85,10 @@ def change_direction(event):
 
 
 def check_collision():
-    has_collided = stub.checkCollision(
+    collision = stub.checkCollision(
         snake_pb2.CollisionRequest(color=snake.color)
     )
-    return has_collided.has_collided
+    return collision.has_collided
 
 
 def draw_all_snakes():
@@ -247,7 +247,7 @@ def bot_flow():
 
 
 def start_game(event=None):
-    # start_game_button.destroy()
+    start_game_button.destroy()
     canvas.pack()
     canvas.create_text(
         40, 15,
@@ -257,8 +257,8 @@ def start_game(event=None):
     )
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
-    # canvas.bind_all('<Key>', change_direction)
-    bot_flow()
+    canvas.bind_all('<Key>', change_direction)
+    game_flow()
 
 
 def on_closing():
@@ -267,9 +267,10 @@ def on_closing():
     root.quit()
 
 
-# start_game_button = tkinter.Button(root, text="Start game")
-# start_game_button.bind('<Button-1>', start_game)
-# start_game_button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+start_game_button = tkinter.Button(root, text="Start game")
+start_game_button.bind('<Button-1>', start_game)
+start_game_button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+start_game_button.configure(width=10, height=2, bg="red", font=("bold", 20))
 root.protocol("WM_DELETE_WINDOW", on_closing)
-start_game()
+#start_game()
 root.mainloop()

@@ -92,7 +92,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         snake = self.SNAKES.get(request.color, None)
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
-        # Check border and self_snake:
+        # Self_snake:
         if Point(x=head_x, y=head_y) in snake.body[1:]:
             self.turn_snake_to_food(snake)
             return snake_pb2.CollisionResponse(has_collided=True)  # return True

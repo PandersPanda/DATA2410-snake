@@ -3,7 +3,7 @@ import tkinter
 from Snake import Snake, Food
 
 SNAKE_SIZE = 20
-GAME_SPEED = 50
+GAME_SPEED = 200
 
 GAME_WIDTH = 600
 GAME_HEIGHT = 620
