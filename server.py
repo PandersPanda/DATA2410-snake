@@ -148,6 +148,7 @@ def serve():
     )
     server.add_insecure_port('[::]:50051')
     server.start()
+    print("Snake server is running...")
     server.wait_for_termination()
 
 
