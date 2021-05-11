@@ -29,7 +29,6 @@ except grpc.RpcError:
     print("This room is full of snakes!")
     sys.exit()
 
-bot = snake
 bot_direction = snake.direction
 
 direction = snake.direction
@@ -96,6 +95,13 @@ def check_collision():
     return collision.has_collided
 
 
+def check_bot_collision():
+    collision = stub.checkCollision(
+        snake_pb2.CollisionRequest(color=bot.color)
+    )
+    return collision.has_collided
+
+
 def draw_all_snakes():
     canvas.delete('snake')
     snakes = stub.getSnakes(snake_pb2.GetRequest())
@@ -132,6 +138,7 @@ def game_flow():
         snakes = stub.getSnakes(snake_pb2.GetRequest())
         for s in snakes:
             stub.removeSnake(s)
+        print(f"You died, final score for: {len(snake.body) - 3}")
         root.quit()
     draw_all_snakes()
     update_score()
@@ -245,9 +252,10 @@ def move_to_food():
 def bot_flow():
     lock_on_to_food()
     move_to_food()
-    if check_collision():
-        print(f"Your snake died, final score: {len(snake.body) - 3}")
-        root.quit()
+    if check_bot_collision():
+        print(f"The bot snake died, final score for bot snake: {len(bot.body) - 3}")
+        draw_all_snakes()
+        return
     draw_all_snakes()
     update_score()
     canvas.after(GAME_SPEED, bot_flow)
