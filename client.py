@@ -28,6 +28,10 @@ try:
 except grpc.RpcError:
     print("This room is full of snakes!")
     sys.exit()
+
+bot = snake
+bot_direction = snake.direction
+
 direction = snake.direction
 target = snake_pb2.Point(x=-1, y=-1)
 
@@ -62,6 +66,7 @@ def draw_food(food, r, color):
 
 def move_snake():
     global snake
+    global direction
     snake = stub.moveSnake(
         snake_pb2.MoveRequest(color=snake.color, direction=direction)
     )
@@ -124,6 +129,9 @@ def update_score():
 def game_flow():
     move_snake()
     if check_collision():
+        snakes = stub.getSnakes(snake_pb2.GetRequest())
+        for s in snakes:
+            stub.removeSnake(s)
         root.quit()
     draw_all_snakes()
     update_score()
@@ -146,9 +154,9 @@ def death_move(new_direction, other_snakes):
 
 
 def avoid_collision():
-    global direction
+    global bot_direction
     moves = ['Up', 'Down', 'Left', 'Right']
-    moves.remove(direction)
+    moves.remove(bot_direction)
     moves.remove(opposite_direction())
     snakes = draw_all_snakes()
     snakes.remove(snake)
@@ -156,8 +164,8 @@ def avoid_collision():
     for s in snakes:
         other_snakes.extend(s.body)
 
-    going_to_die = death_move(direction, other_snakes)
-    new_direction = direction
+    going_to_die = death_move(bot_direction, other_snakes)
+    new_direction = bot_direction
     while going_to_die:
         if len(moves) == 0:
             break
@@ -165,7 +173,7 @@ def avoid_collision():
         moves.remove(new_direction)
         going_to_die = death_move(new_direction, other_snakes)
 
-    direction = new_direction
+    bot_direction = new_direction
 
 
 def lock_on_to_food():
@@ -176,7 +184,7 @@ def lock_on_to_food():
 
 
 def is_opposite_direction(new_direction):
-    return {direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]
+    return {bot_direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]
 
 
 def opposite_direction():
@@ -186,11 +194,11 @@ def opposite_direction():
         'Left': 'Right',
         'Right': 'Left'
     }
-    return opposite_dictionary[direction]
+    return opposite_dictionary[bot_direction]
 
 
 def get_legal_moves():
-    global direction
+    global bot_direction
     opposite_dir = {
         'Up': 'Down',
         'Down': 'Up',
@@ -198,7 +206,7 @@ def get_legal_moves():
         'Right': 'Left'
     }
     legal_moves = ['Up', 'Down', 'Right', 'Left']
-    opp = opposite_dir.get(direction, None)
+    opp = opposite_dir.get(bot_direction, None)
     if opp:
         legal_moves.remove(opp)
     return legal_moves
@@ -206,11 +214,11 @@ def get_legal_moves():
 
 def move_to_food():
     global target
-    global direction
-    global snake
+    global bot_direction
+    global bot
 
-    target_x = target.x - snake.body[0].x
-    target_y = target.y - snake.body[0].y
+    target_x = target.x - bot.body[0].x
+    target_y = target.y - bot.body[0].y
 
     if target_x < 0:
         new_direction = 'Left'
@@ -228,10 +236,10 @@ def move_to_food():
         new_direction = 'Down'
         if is_opposite_direction(new_direction):
             new_direction = random.choice(['Left', 'Right'])
-    direction = new_direction
+    bot_direction = new_direction
     avoid_collision()
 
-    snake = stub.moveSnake(snake_pb2.MoveRequest(color=snake.color, direction=direction))
+    bot = stub.moveSnake(snake_pb2.MoveRequest(color=bot.color, direction=bot_direction))
 
 
 def bot_flow():
@@ -244,23 +252,6 @@ def bot_flow():
     update_score()
     canvas.after(GAME_SPEED, bot_flow)
 
-
-def start_single_game(event=None):
-    start_game_button.destroy()
-    multiplayer_button.destroy()
-    canvas.pack()
-    canvas.create_text(
-        40, 15,
-        text=f"Score: {len(snake.body) - 3}",
-        fill=snake.color, tag='score',
-        font=('TkDefaultFont', 12)
-    )
-    random_food_thread = threading.Thread(target=random_food, daemon=True)
-    random_food_thread.start()
-    canvas.bind_all('<Key>', change_direction)
-
-    bot_snake = stub.addSnake
-    game_flow()
 
 def start_multi_game(event=None):
     start_game_button.destroy()
@@ -275,7 +266,29 @@ def start_multi_game(event=None):
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
-    bot_flow()
+
+    game_flow()
+
+
+def start_single_game(event=None):
+    global bot
+    start_game_button.destroy()
+    multiplayer_button.destroy()
+    canvas.pack()
+    canvas.create_text(
+        40, 15,
+        text=f"Score: {len(snake.body) - 3}",
+        fill=snake.color, tag='score',
+        font=('TkDefaultFont', 12)
+    )
+    random_food_thread = threading.Thread(target=random_food, daemon=True)
+    random_food_thread.start()
+    canvas.bind_all('<Key>', change_direction)
+
+    bot = stub.addSnake(snake_pb2.JoinRequest())
+    bot_thread = threading.Thread(target=bot_flow(), daemon=True)
+    bot_thread.start()
+    game_flow()
 
 
 def on_closing():
@@ -287,8 +300,10 @@ def on_closing():
 start_game_button = tkinter.Button(root, text="Single player")
 multiplayer_button = tkinter.Button(root, text="Multiplayer")
 
-start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_single_game)
-multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20), command=start_multi_game)
+start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
+                            command=start_single_game)
+multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
+                             command=start_multi_game)
 
 start_game_button.place(x=220, y=200)
 multiplayer_button.place(x=220, y=350)
