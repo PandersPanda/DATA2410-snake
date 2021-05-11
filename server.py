@@ -65,8 +65,8 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         new_direction = request.direction
         snake = self.SNAKES.get(request.color, None)
 
-        opposite_direction = [{'Up', 'Down'}, {'Left', 'Right'}]
-        if {snake.direction, new_direction} in opposite_direction:
+        opposite_directions = [{'Up', 'Down'}, {'Left', 'Right'}]
+        if {snake.direction, new_direction} in opposite_directions:
             new_direction = snake.direction
         # [Point(x=2, y=0), Point(x=1, y=0), Point(x=0, y=0)]
         new_head = Point(x=snake.body[0].x, y=snake.body[0].y)

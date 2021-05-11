@@ -29,6 +29,8 @@ except grpc.RpcError:
     print("This room is full of snakes!")
     sys.exit()
 
+bot_direction = snake.direction
+
 direction = snake.direction
 target = snake_pb2.Point(x=-1, y=-1)
 
@@ -93,6 +95,13 @@ def check_collision():
     return collision.has_collided
 
 
+def check_bot_collision():
+    collision = stub.checkCollision(
+        snake_pb2.CollisionRequest(color=bot.color)
+    )
+    return collision.has_collided
+
+
 def draw_all_snakes():
     canvas.delete('snake')
     snakes = stub.getSnakes(snake_pb2.GetRequest())
@@ -137,6 +146,121 @@ def game_flow():
     canvas.after(GAME_SPEED, game_flow)
 
 
+def death_move(new_direction, other_snakes):
+    global snake
+    head = snake_pb2.Point(x=snake.body[0].x, y=snake.body[0].y)
+    if new_direction == 'Right':
+        head.x = (head.x + 1) % 30
+    elif new_direction == 'Left':
+        head.x = (head.x - 1) % 30
+    elif new_direction == 'Down':
+        head.y = (head.y + 1) % 31
+    elif new_direction == 'Up':
+        head.y = (head.y - 1) % 31
+    return head in snake.body[1:] or head in other_snakes
+
+
+def avoid_collision():
+    global bot_direction
+    moves = ['Up', 'Down', 'Left', 'Right']
+    moves.remove(bot_direction)
+    moves.remove(opposite_direction())
+    snakes = draw_all_snakes()
+    snakes.remove(snake)
+    other_snakes = []
+    for s in snakes:
+        other_snakes.extend(s.body)
+
+    going_to_die = death_move(bot_direction, other_snakes)
+    new_direction = bot_direction
+    while going_to_die:
+        if len(moves) == 0:
+            break
+        new_direction = random.choice(moves)
+        moves.remove(new_direction)
+        going_to_die = death_move(new_direction, other_snakes)
+
+    bot_direction = new_direction
+
+
+def lock_on_to_food():
+    global target
+    foods = spawn_foods()
+    if target not in foods:
+        target = random.choice(foods)
+
+
+def is_opposite_direction(new_direction):
+    return {bot_direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]
+
+
+def opposite_direction():
+    opposite_dictionary = {
+        'Up': 'Down',
+        'Down': 'Up',
+        'Left': 'Right',
+        'Right': 'Left'
+    }
+    return opposite_dictionary[bot_direction]
+
+
+def get_legal_moves():
+    global bot_direction
+    opposite_dir = {
+        'Up': 'Down',
+        'Down': 'Up',
+        'Left': 'Right',
+        'Right': 'Left'
+    }
+    legal_moves = ['Up', 'Down', 'Right', 'Left']
+    opp = opposite_dir.get(bot_direction, None)
+    if opp:
+        legal_moves.remove(opp)
+    return legal_moves
+
+
+def move_to_food():
+    global target
+    global bot_direction
+    global bot
+
+    target_x = target.x - bot.body[0].x
+    target_y = target.y - bot.body[0].y
+
+    if target_x < 0:
+        new_direction = 'Left'
+        if is_opposite_direction(new_direction):
+            new_direction = random.choice(['Up', 'Down'])
+    elif target_x > 0:
+        new_direction = 'Right'
+        if is_opposite_direction(new_direction):
+            new_direction = random.choice(['Up', 'Down'])
+    elif target_y < 0:
+        new_direction = 'Up'
+        if is_opposite_direction(new_direction):
+            new_direction = random.choice(['Left', 'Right'])
+    else:
+        new_direction = 'Down'
+        if is_opposite_direction(new_direction):
+            new_direction = random.choice(['Left', 'Right'])
+    bot_direction = new_direction
+    avoid_collision()
+
+    bot = stub.moveSnake(snake_pb2.MoveRequest(color=bot.color, direction=bot_direction))
+
+
+def bot_flow():
+    lock_on_to_food()
+    move_to_food()
+    if check_bot_collision():
+        print(f"The bot snake died, final score for bot snake: {len(bot.body) - 3}")
+        draw_all_snakes()
+        return
+    draw_all_snakes()
+    update_score()
+    canvas.after(GAME_SPEED, bot_flow)
+
+
 def start_multi_game(event=None):
     start_game_button.destroy()
     multiplayer_button.destroy()
@@ -155,6 +279,7 @@ def start_multi_game(event=None):
 
 
 def start_single_game(event=None):
+    global bot
     start_game_button.destroy()
     multiplayer_button.destroy()
     canvas.pack()
@@ -168,6 +293,9 @@ def start_single_game(event=None):
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
 
+    bot = stub.addSnake(snake_pb2.JoinRequest())
+    bot_thread = threading.Thread(target=bot_flow(), daemon=True)
+    bot_thread.start()
     game_flow()
 
 
