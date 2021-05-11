@@ -9,6 +9,7 @@ message Snake {
   string color = 1;
   string direction = 2;
   repeated Point body = 3;
+  bool isBot = 4;
 }
 
 message JoinRequest {}
