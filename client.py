@@ -138,6 +138,7 @@ def game_flow():
 
 
 def start_multi_game(event=None):
+    username = username_var.get()
     start_game_button.destroy()
     multiplayer_button.destroy()
     canvas.pack()
@@ -167,8 +168,18 @@ def start_single_game(event=None):
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
-
     game_flow()
+
+def submit():
+    username = username_var.get()
+    print(username)
+    user_name_input.destroy()
+    submit_button.destroy()
+    title_label.destroy()
+
+    start_game_button.place(x=220, y=200)
+    multiplayer_button.place(x=220, y=350)
+
 
 
 def on_closing():
@@ -177,16 +188,26 @@ def on_closing():
     root.quit()
 
 
+
+title_label = tkinter.Label(text='Username:', font=("bold", 20))
+username_var = tkinter.StringVar()
+username = ""
+user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
+submit_button = tkinter.Button(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
+                            command = submit)
+
 start_game_button = tkinter.Button(root, text="Single player")
 multiplayer_button = tkinter.Button(root, text="Multiplayer")
 
 start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
                             command=start_single_game)
+
 multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
                              command=start_multi_game)
 
-start_game_button.place(x=220, y=200)
-multiplayer_button.place(x=220, y=350)
+title_label.place(x=160,y=150)
+user_name_input.place(x=160, y=200)
+submit_button.place(x=220, y=250)
 root.protocol("WM_DELETE_WINDOW", on_closing)
 # start_game()
 root.mainloop()
