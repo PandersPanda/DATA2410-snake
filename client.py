@@ -25,7 +25,8 @@ channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 try:
     snake = stub.addSnake(snake_pb2.JoinRequest())
-except grpc.RpcError:
+except grpc.RpcError as e:
+    print(e)
     print("This room is full of snakes!")
     sys.exit()
 
@@ -137,10 +138,7 @@ def game_flow():
     canvas.after(GAME_SPEED, game_flow)
 
 
-def start_multi_game(event=None):
-    username = username_var.get()
-    start_game_button.destroy()
-    multiplayer_button.destroy()
+def start_game():
     canvas.pack()
     canvas.create_text(
         40, 15,
@@ -148,12 +146,24 @@ def start_multi_game(event=None):
         fill=snake.color, tag='score',
         font=('TkDefaultFont', 12)
     )
+
+    four_player_button.destroy()
+    six_player_button.destroy()
+    eight_player_button.destroy()
+
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
-
     game_flow()
 
+
+def start_multi_game(event=None):
+    start_game_button.destroy()
+    multiplayer_button.destroy()
+
+    four_player_button.place(x=220, y=150)
+    six_player_button.place(x=220, y=300)
+    eight_player_button.place(x=220, y=450)
 
 def start_single_game(event=None):
     start_game_button.destroy()
@@ -168,18 +178,8 @@ def start_single_game(event=None):
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
+
     game_flow()
-
-def submit():
-    username = username_var.get()
-    print(username)
-    user_name_input.destroy()
-    submit_button.destroy()
-    title_label.destroy()
-
-    start_game_button.place(x=220, y=200)
-    multiplayer_button.place(x=220, y=350)
-
 
 
 def on_closing():
@@ -188,26 +188,28 @@ def on_closing():
     root.quit()
 
 
-
-title_label = tkinter.Label(text='Username:', font=("bold", 20))
-username_var = tkinter.StringVar()
-username = ""
-user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
-submit_button = tkinter.Button(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                            command = submit)
-
 start_game_button = tkinter.Button(root, text="Single player")
 multiplayer_button = tkinter.Button(root, text="Multiplayer")
 
 start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
                             command=start_single_game)
-
 multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
                              command=start_multi_game)
 
-title_label.place(x=160,y=150)
-user_name_input.place(x=160, y=200)
-submit_button.place(x=220, y=250)
+four_player_button = tkinter.Button(text="4 Player")
+four_player_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
+                             command=start_game)
+
+six_player_button = tkinter.Button(text="6 Player")
+six_player_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
+                            command=start_game)
+
+eight_player_button = tkinter.Button(text="8 player")
+eight_player_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
+                              command=start_game)
+
+start_game_button.place(x=220, y=200)
+multiplayer_button.place(x=220, y=350)
 root.protocol("WM_DELETE_WINDOW", on_closing)
 # start_game()
 root.mainloop()
