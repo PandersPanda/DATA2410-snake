@@ -216,17 +216,23 @@ def game_over():
 
     replay_button = tkinter.Button(root, text="Play again", width=10, height=1, bg="red", activebackground="#cf0000",
                                    font=("bold", 20),
-                                   command=lambda: replay(gameover_lb, score_lb, replay_button),
+                                   command=lambda: replay(gameover_lb, score_lb, replay_button, quit_button),
                                    bd=3)
     replay_button.place(x=220, y=300)
 
+    quit_button = tkinter.Button(root, text="Quit", width=10, height=1, bg="red", activebackground="#cf0000",
+                                   font=("bold", 20),
+                                   command=root.quit,
+                                   bd=3)
+    quit_button.place(x=220, y=370)
 
-def replay(gameover, score, button):
+def replay(gameover, score, button, button2):
     global snake
     global direction
     button.destroy()
     gameover.destroy()
     score.destroy()
+    button2.destroy()
     snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
     direction = snake.direction
     start_game()
