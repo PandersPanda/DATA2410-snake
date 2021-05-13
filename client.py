@@ -197,11 +197,6 @@ def submit():
     start_game()
 
 def show_help():
-    user_name_input.destroy()
-    submit_button.destroy()
-    title_label.destroy()
-    help_button.destroy()
-
     back_button=tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
                                command=starting_screen, text="Back", bd=3)
 
