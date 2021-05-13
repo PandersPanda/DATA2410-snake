@@ -49,7 +49,6 @@ except grpc.RpcError:
 
 direction = snake.direction
 
-
 canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
                         highlightthickness=0, background=BACKGROUND_COLOR)
 
@@ -208,25 +207,25 @@ def submit():
     title_label.destroy()
     start_game()
 
+
 def show_help():
     user_name_input.destroy()
     submit_button.destroy()
     title_label.destroy()
     help_button.destroy()
 
-    back_button=tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=starting_screen, text="Back", bd=3)
+    back_button = tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                                 command=starting_screen, text="Back", bd=3)
 
     title1 = tkinter.Label(text=f"Gameplay:", font=("bold", 20))
 
     information_label = tkinter.Label(text=f"Snake is a game where you get bigger by eating food,\n"
-                                      "The goal is to get as big as possible, can you beat the highscore?\n"
-                                        "You will die if you either hit one of the borders or crash into\n"
-                                        "the other snakes", font=12)
+                                           "The goal is to get as big as possible, can you beat the highscore?\n"
+                                           "You will die if you either hit one of the borders or crash into\n"
+                                           "the other snakes", font=12)
     back_button.place(x=400, y=0)
     title1.place(x=0, y=0)
     information_label.place(x=0, y=50)
-
 
 
 def on_closing():
@@ -234,11 +233,13 @@ def on_closing():
     stub.removeSnake(snake)
     root.quit()
 
+
 def starting_screen():
     title_label.place(x=160, y=200)
     user_name_input.place(x=160, y=250)
     submit_button.place(x=220, y=300)
     help_button.place(x=220, y=380)
+
 
 title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
 message_label = tkinter.Label(text='', font=("cursive", 11))
@@ -248,7 +249,7 @@ user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
 submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
                                command=submit, text="Play Game", bd=3)
 help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=show_help, text="Help", bd=3)
+                             command=show_help, text="Help", bd=3)
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
 starting_screen()
