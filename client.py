@@ -13,8 +13,8 @@ GAME_SPEED = 50
 WINDOW_WIDTH = 620
 WINDOW_HEIGHT = 620
 
-GAME_WIDTH = 2 * WINDOW_WIDTH
-GAME_HEIGHT = 2 * WINDOW_WIDTH
+GAME_WIDTH = 4 * WINDOW_WIDTH
+GAME_HEIGHT = 4 * WINDOW_WIDTH
 
 GRID_ELEMENT_X = GAME_WIDTH // SNAKE_SIZE
 GRID_ELEMENT_Y = GAME_HEIGHT // SNAKE_SIZE
@@ -42,7 +42,7 @@ score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
 channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 try:
-    snake = stub.addSnake(snake_pb2.JoinRequest())
+    snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
 except grpc.RpcError:
     print("This room is full of snakes!")
     sys.exit()

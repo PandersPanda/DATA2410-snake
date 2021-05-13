@@ -15,9 +15,8 @@ message Snake {
 }
 
 message JoinRequest {
-  int32 windowWidth= 1;
-  int32 windowHeight= 2;
-  int32 snakeSize = 3;
+  int32 maxX = 1;
+  int32 maxY = 2;
 }
 
 message MoveRequest {
@@ -41,8 +40,7 @@ message BoardDimension {
 }
 
 service SnakeService {
-  rpc getBoardDimension (JoinRequest) returns (BoardDimension) {}
-  rpc addSnake (GetRequest) returns (Snake) {}
+  rpc addSnake (JoinRequest) returns (Snake) {}
   rpc removeSnake (Snake) returns (Snake) {}
   rpc moveSnake (MoveRequest) returns (Snake) {}
   rpc getSnakes (GetRequest) returns (stream Snake){}
