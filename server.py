@@ -72,9 +72,9 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         new_head = Point(x=snake.body[0].x, y=snake.body[0].y)
 
         if new_direction == "Right" or new_direction == 'Left':
-            new_head.x = (snake.body[0].x + self.DIRECTIONS.get(new_direction, 0)) % 30
+            new_head.x = (snake.body[0].x + self.DIRECTIONS.get(new_direction, 0)) % 62
         else:
-            new_head.y = (snake.body[0].y + self.DIRECTIONS.get(new_direction, 0)) % 31
+            new_head.y = (snake.body[0].y + self.DIRECTIONS.get(new_direction, 0)) % 62
 
         if new_head in self.FOODS:
             self.FOODS.remove(new_head)

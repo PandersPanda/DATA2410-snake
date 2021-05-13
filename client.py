@@ -10,7 +10,7 @@ import sys
 SNAKE_SIZE = 20
 GAME_SPEED = 50
 
-GAME_WIDTH = 600
+GAME_WIDTH = 620
 GAME_HEIGHT = 620
 
 root = tkinter.Tk()
@@ -19,7 +19,7 @@ root.resizable(False, False)
 root.title("Snake Game")
 
 canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background='grey6')
-
+canvas.config(scrollregion=[0, 0, 2 * GAME_WIDTH, 2 * GAME_HEIGHT])
 channel = grpc.insecure_channel('localhost:50051')
 
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
@@ -65,9 +65,15 @@ def draw_food(food, r, color):
 def move_snake():
     global snake
     global direction
+    global canvas
     snake = stub.moveSnake(
         snake_pb2.MoveRequest(color=snake.color, direction=direction)
     )
+    x_lock = snake.body[0].x
+    y_lock = snake.body[0].y
+    scroll_fraction = 1/62
+    canvas.xview_moveto(x_lock * scroll_fraction)
+    canvas.yview_moveto(y_lock * scroll_fraction)
 
 
 def change_direction(event):
@@ -164,6 +170,7 @@ def start_multi_game(event=None):
     four_player_button.place(x=220, y=150)
     six_player_button.place(x=220, y=300)
     eight_player_button.place(x=220, y=450)
+
 
 def start_single_game(event=None):
     start_game_button.destroy()
