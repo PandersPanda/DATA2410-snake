@@ -21,7 +21,9 @@ root.geometry(f'{GAME_WIDTH}x{GAME_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
-canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT, highlightthickness=0, background=BACKGROUND_COLOR)
+score_canvas = tkinter.Canvas(width=GAME_WIDTH, height=20)
+
+canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT-20, highlightthickness=0, background=BACKGROUND_COLOR)
 canvas.config(scrollregion=[0, 0, 2 * GAME_WIDTH, 2 * GAME_HEIGHT])
 canvas.create_rectangle(0, 0, 2*GAME_WIDTH, 2*GAME_HEIGHT, fill='', outline=BORDER_COLOR, width=2*SNAKE_SIZE - 2)
 
@@ -129,7 +131,7 @@ def random_food():
 
 
 def update_score():
-    canvas.itemconfigure('score', text=f"Score: {len(snake.body) - 3}")
+    score_canvas.itemconfigure('score', text=f"Score: {len(snake.body) - 3}")
 
 
 def game_flow():
@@ -167,13 +169,22 @@ def start_multi_game(event=None):
 def start_single_game(event=None):
     start_game_button.destroy()
     multiplayer_button.destroy()
+    message_label.destroy()
+    score_canvas.pack()
     canvas.pack()
-    canvas.create_text(
+    score_canvas.create_text(
         40, 15,
         text=f"Score: {len(snake.body) - 3}",
         fill=snake.color, tag='score',
         font=('TkDefaultFont', 12)
     )
+    score_canvas.create_text(
+        200, 15,
+        text=f"Username: " + username,
+        fill=snake.color, tag='username',
+        font=('TkDefaultFont', 12)
+    )
+
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
@@ -181,6 +192,7 @@ def start_single_game(event=None):
 
 
 def submit():
+    global username
     username = username_var.get()
 
     if username == "":
@@ -193,13 +205,6 @@ def submit():
     user_name_input.destroy()
     submit_button.destroy()
     title_label.destroy()
-
-    canvas.create_text(
-        200, 15,
-        text=f"Username: " + username,
-        fill=snake.color, tag='username',
-        font=('TkDefaultFont', 12)
-    )
 
     start_game_button.place(x=220, y=200)
     multiplayer_button.place(x=220, y=350)
