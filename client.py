@@ -173,7 +173,8 @@ def game_flow():
         for s in snakes:
             stub.removeSnake(s)
         print(f"You died, final score for: {len(snake.body) - 3}")
-        root.quit()
+        game_over()
+        return
     draw_all_snakes()
     update_score()
     spawn_foods()
@@ -204,6 +205,24 @@ def start_game(event=None):
     canvas.bind_all('<Key>', change_direction)
     game_flow()
 
+def game_over():
+    canvas.pack_forget()
+    gameover_lb = tkinter.Label(root, text="Game Over", font=("Bold", 35))
+    gameover_lb.place(x= 200, y=200)
+
+    score_lb=tkinter.Label(root, text=f"Your score was {len(snake.body) - 3}")
+    score_lb.place(x=200, y=260)
+
+    replay_button = tkinter.Button(root, text="Play again", width=10, height=1, bg="red", activebackground="#cf0000",
+                                   font=("bold", 20), command=replay, bd=3)
+    replay_button.place(x=220, y=300)
+
+def replay():
+    global snake
+    global direction
+    snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
+    direction = snake.direction
+    start_game()
 
 def submit():
     global username
@@ -254,12 +273,7 @@ def show_help():
 
 def on_closing():
     canvas.delete('all')
-    stub.removeSnake(snake)
     root.quit()
-
-
-
-
 
 title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
 message_label = tkinter.Label(text='', font=("cursive", 11))
