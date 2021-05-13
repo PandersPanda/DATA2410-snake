@@ -26,30 +26,36 @@ cnxn.close()
 SNAKE_SIZE = 20
 GAME_SPEED = 50
 
-GAME_WIDTH = 620
-GAME_HEIGHT = 620
+WINDOW_WIDTH = 620
+WINDOW_HEIGHT = 620
+
+GAME_WIDTH = 2 * WINDOW_WIDTH
+GAME_HEIGHT = 2 * WINDOW_WIDTH
+
+GRID_ELEMENT_X = GAME_WIDTH // SNAKE_SIZE
+GRID_ELEMENT_Y = GAME_HEIGHT // SNAKE_SIZE
+
+SCROLL_RESPONSE_X = 1 / (2 * GAME_WIDTH / WINDOW_WIDTH)
+SCROLL_FRACTION_X = 1 / GRID_ELEMENT_X
+
+SCROLL_RESPONSE_Y = 1 / (2 * GAME_HEIGHT / WINDOW_HEIGHT)
+SCROLL_FRACTION_Y = 1 / GRID_ELEMENT_Y
 
 BACKGROUND_COLOR = 'grey6'
 BORDER_COLOR = 'red4'
 
 root = tkinter.Tk()
-root.geometry(f'{GAME_WIDTH}x{GAME_HEIGHT}')
+root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
 bg = tkinter.PhotoImage(file="bg.png")
-label1 = tkinter.Label(root, image = bg)
-label1.place(x=0,y=0)
+label1 = tkinter.Label(root, image=bg)
+label1.place(x=0, y=0)
 
-score_canvas = tkinter.Canvas(width=GAME_WIDTH, height=20)
-
-canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT-20, highlightthickness=0, background=BACKGROUND_COLOR)
-canvas.config(scrollregion=[0, 0, 2 * GAME_WIDTH, 2 * GAME_HEIGHT])
-canvas.create_rectangle(0, 0, 2 * GAME_WIDTH + 1.5, 2 * GAME_HEIGHT + 1.5,
-                        fill='', outline=BORDER_COLOR, width=2*SNAKE_SIZE)
+score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
 
 channel = grpc.insecure_channel('localhost:50051')
-
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 try:
     snake = stub.addSnake(snake_pb2.JoinRequest())
@@ -58,7 +64,13 @@ except grpc.RpcError:
     sys.exit()
 
 direction = snake.direction
-target = snake_pb2.Point(x=-1, y=-1)
+
+canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
+                        highlightthickness=0, background=BACKGROUND_COLOR)
+
+canvas.config(scrollregion=[0, 0, GAME_WIDTH, GAME_HEIGHT])
+canvas.create_rectangle(0, 0, GAME_WIDTH + 1.5, GAME_HEIGHT + 1.5,
+                        fill='', outline=BORDER_COLOR, width=2 * SNAKE_SIZE)
 
 
 def draw_snake(s):
@@ -96,9 +108,8 @@ def move_snake():
     )
     x_lock = snake.body[0].x
     y_lock = snake.body[0].y
-    scroll_fraction = 1 / 62
-    canvas.xview_moveto(x_lock * scroll_fraction - 1 / 5)
-    canvas.yview_moveto(y_lock * scroll_fraction - 1 / 5)
+    canvas.xview_moveto(x_lock * SCROLL_FRACTION_X - SCROLL_RESPONSE_X)
+    canvas.yview_moveto(y_lock * SCROLL_FRACTION_Y - SCROLL_RESPONSE_Y)
 
 
 def change_direction(event):
@@ -169,29 +180,11 @@ def game_flow():
     canvas.after(GAME_SPEED, game_flow)
 
 
-def start_multi_game(event=None):
-    username = username_var.get()
-    start_game_button.destroy()
-    multiplayer_button.destroy()
-    canvas.pack()
-    canvas.create_text(
-        40, 15,
-        text=f"Score: {len(snake.body) - 3}",
-        fill=snake.color, tag='score',
-        font=('TkDefaultFont', 12)
-    )
-    random_food_thread = threading.Thread(target=random_food, daemon=True)
-    random_food_thread.start()
-    canvas.bind_all('<Key>', change_direction)
-
-    game_flow()
-
-
-def start_single_game(event=None):
-    start_game_button.destroy()
-    multiplayer_button.destroy()
+def start_game(event=None):
     message_label.destroy()
     score_canvas.pack()
+    help_button.destroy()
+
     canvas.pack()
     score_canvas.create_text(
         40, 15,
@@ -218,19 +211,37 @@ def submit():
 
     if username == "":
         message_label.configure(text="Please enter a username")
-        message_label.place(x=220, y=380)
+        message_label.place(x=220, y=450)
         return
     if len(username) > 15:
         message_label.configure(text="Enter a username that is under 15 characters")
-        message_label.place(x=220, y=380)
+        message_label.place(x=220, y=450)
         return
 
     user_name_input.destroy()
     submit_button.destroy()
     title_label.destroy()
+    start_game()
 
-    start_game_button.place(x=220, y=200)
-    multiplayer_button.place(x=220, y=350)
+
+def show_help():
+    user_name_input.destroy()
+    submit_button.destroy()
+    title_label.destroy()
+    help_button.destroy()
+
+    back_button=tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                               command=starting_screen, text="Back", bd=3)
+
+    title1 = tkinter.Label(text=f"Gameplay:", font=("bold", 20))
+
+    information_label = tkinter.Label(text=f"Snake is a game where you get bigger by eating food,\n"
+                                           "The goal is to get as big as possible, can you beat the highscore?\n"
+                                           "You will die if you either hit one of the borders or crash into\n"
+                                           "the other snakes", font=12)
+    back_button.place(x=400, y=0)
+    title1.place(x=0, y=0)
+    information_label.place(x=0, y=50)
 
 
 def on_closing():
@@ -239,26 +250,24 @@ def on_closing():
     root.quit()
 
 
-title_label = tkinter.Label(text='Username:', font=("bold", 20))
+def starting_screen():
+    title_label.place(x=160, y=200)
+    user_name_input.place(x=160, y=250)
+    submit_button.place(x=220, y=300)
+    help_button.place(x=220, y=380)
+
+
+title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
 message_label = tkinter.Label(text='', font=("cursive", 11))
 username_var = tkinter.StringVar()
 username = ""
 user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
-submit_button = tkinter.Button(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=submit, text="Submit", bd=3)
+submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                               command=submit, text="Play Game", bd=3)
+help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                             command=show_help, text="Help", bd=3)
 
-start_game_button = tkinter.Button(root, text="Single player")
-multiplayer_button = tkinter.Button(root, text="Multiplayer")
-
-start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                            command=start_single_game)
-
-multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                             command=start_multi_game)
-
-title_label.place(x=160, y=190)
-user_name_input.place(x=160, y=240)
-submit_button.place(x=220, y=290)
 root.protocol("WM_DELETE_WINDOW", on_closing)
+starting_screen()
 # start_game()
 root.mainloop()
