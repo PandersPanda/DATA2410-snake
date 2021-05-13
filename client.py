@@ -18,7 +18,7 @@ cnxn = mysql.connector.connect(**config)
 
 cursor = cnxn.cursor()
 cursor.execute('USE snake_highscores')
-cursor.execute('CREATE TABLE IF NOT EXISTS testbokstad('
+cursor.execute('CREATE TABLE IF NOT EXISTS googlegud('
                'id int(6) PRIMARY KEY'
                ') ')
 cnxn.close()
@@ -205,24 +205,32 @@ def start_game(event=None):
     canvas.bind_all('<Key>', change_direction)
     game_flow()
 
+
 def game_over():
     canvas.pack_forget()
     gameover_lb = tkinter.Label(root, text="Game Over", font=("Bold", 35))
-    gameover_lb.place(x= 200, y=200)
+    gameover_lb.place(x=200, y=200)
 
-    score_lb=tkinter.Label(root, text=f"Your score was {len(snake.body) - 3}")
+    score_lb = tkinter.Label(root, text=f"Your score was {len(snake.body) - 3}")
     score_lb.place(x=200, y=260)
 
     replay_button = tkinter.Button(root, text="Play again", width=10, height=1, bg="red", activebackground="#cf0000",
-                                   font=("bold", 20), command=replay, bd=3)
+                                   font=("bold", 20),
+                                   command=lambda: replay(gameover_lb, score_lb, replay_button),
+                                   bd=3)
     replay_button.place(x=220, y=300)
 
-def replay():
+
+def replay(gameover, score, button):
     global snake
     global direction
+    button.destroy()
+    gameover.destroy()
+    score.destroy()
     snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
     direction = snake.direction
     start_game()
+
 
 def submit():
     global username
@@ -244,21 +252,22 @@ def submit():
 
 
 def show_help():
-    help_window=tkinter.Tk()
+    help_window = tkinter.Tk()
     help_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
     help_window.resizable(False, False)
     help_window.title("Snake Game: Help")
 
     frame1 = tkinter.Frame(help_window)
-    back_button=tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=help_window.destroy, text="Back", bd=3)
+    back_button = tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=help_window.destroy, text="Back", bd=3)
 
     title1 = tkinter.Label(help_window, text=f"Gameplay:", font=("bold", 20))
 
     information_label = tkinter.Label(help_window, text=f"Snake is a game where you get bigger by eating food,\n"
-                                           "The goal is to get as big as possible, can you beat the highscore?\n"
-                                           "You will die if you either hit one of the borders or crash into\n"
-                                           "the other snakes", font=12)
+                                                        "The goal is to get as big as possible, can you beat the highscore?\n"
+                                                        "You will die if you either hit one of the borders or crash into\n"
+                                                        "the other snakes", font=12)
 
     title2 = tkinter.Label(help_window, text=f"Controls:", font=("bold", 20))
 
@@ -274,6 +283,7 @@ def show_help():
 def on_closing():
     canvas.delete('all')
     root.quit()
+
 
 title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
 message_label = tkinter.Label(text='', font=("cursive", 11))
