@@ -21,6 +21,10 @@ root.geometry(f'{GAME_WIDTH}x{GAME_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
+bg = tkinter.PhotoImage(file="bg.png")
+label1 = tkinter.Label(root, image = bg)
+label1.place(x=0,y=0)
+
 score_canvas = tkinter.Canvas(width=GAME_WIDTH, height=20)
 
 canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT-20, highlightthickness=0, background=BACKGROUND_COLOR)
@@ -198,9 +202,11 @@ def submit():
 
     if username == "":
         message_label.configure(text="Please enter a username")
+        message_label.place(x=220, y=380)
         return
     if len(username) > 15:
         message_label.configure(text="Enter a username that is under 15 characters")
+        message_label.place(x=220, y=380)
         return
 
     user_name_input.destroy()
@@ -237,7 +243,6 @@ multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf
 title_label.place(x=160, y=190)
 user_name_input.place(x=160, y=240)
 submit_button.place(x=220, y=290)
-message_label.place(x=220, y=380)
 root.protocol("WM_DELETE_WINDOW", on_closing)
 # start_game()
 root.mainloop()
