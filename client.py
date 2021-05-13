@@ -214,8 +214,8 @@ def show_help():
     title_label.destroy()
     help_button.destroy()
 
-    back_button = tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                                 command=starting_screen, text="Back", bd=3)
+    back_button=tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                               command=starting_screen, text="Back", bd=3)
 
     title1 = tkinter.Label(text=f"Gameplay:", font=("bold", 20))
 
