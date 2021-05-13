@@ -25,7 +25,8 @@ score_canvas = tkinter.Canvas(width=GAME_WIDTH, height=20)
 
 canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT-20, highlightthickness=0, background=BACKGROUND_COLOR)
 canvas.config(scrollregion=[0, 0, 2 * GAME_WIDTH, 2 * GAME_HEIGHT])
-canvas.create_rectangle(0, 0, 2*GAME_WIDTH, 2*GAME_HEIGHT, fill='', outline=BORDER_COLOR, width=2*SNAKE_SIZE - 2)
+canvas.create_rectangle(0, 0, 2 * GAME_WIDTH + 1.5, 2 * GAME_HEIGHT + 1.5,
+                        fill='', outline=BORDER_COLOR, width=2*SNAKE_SIZE)
 
 channel = grpc.insecure_channel('localhost:50051')
 
@@ -76,8 +77,8 @@ def move_snake():
     x_lock = snake.body[0].x
     y_lock = snake.body[0].y
     scroll_fraction = 1 / 62
-    canvas.xview_moveto(x_lock * scroll_fraction - 1 / 4)
-    canvas.yview_moveto(y_lock * scroll_fraction - 1 / 4)
+    canvas.xview_moveto(x_lock * scroll_fraction - 1 / 5)
+    canvas.yview_moveto(y_lock * scroll_fraction - 1 / 5)
 
 
 def change_direction(event):
