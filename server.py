@@ -7,6 +7,8 @@ import random
 
 
 class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
+    MAX_X = 31
+    MAX_Y = 31
     SNAKES = {}
     FOODS = []
     AVAILABLE_COLORS = ['Purple', 'Maroon1', 'Cyan2', 'Orange', 'Green', 'Yellow', 'Blue', 'Red']
@@ -21,7 +23,10 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         #  Possible directions:
         directions = ['Up', 'Down', 'Left', 'Right']
 
-        x, y = random.randint(6, 24), random.randint(6, 27)
+        self.MAX_X = request.maxX
+        self.MAX_Y = request.maxY
+
+        x, y = random.randint(10, self.MAX_X-10), random.randint(10, self.MAX_Y-10)
         body = [Point(x=x, y=y)]  # Random head
         if random.randint(0, 1):
             r = random.choice([-1, 1])
@@ -93,7 +98,9 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
         # Self_snake:
-        if Point(x=head_x, y=head_y) in snake.body[1:] or head_x in (0, 123) or head_y in (0, 123):
+        if Point(x=head_x, y=head_y) in snake.body[1:] or \
+                head_x in (0, self.MAX_X - 1) or \
+                head_y in (0, self.MAX_Y - 1):
             self.turn_snake_to_food(snake)
             return snake_pb2.CollisionResponse(has_collided=True)  # return True
 
@@ -123,14 +130,14 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         return request
 
     def add_food(self):
-        x, y = random.randint(0, 29*2), random.randint(0, 30*2)
+        x, y = random.randint(0, self.MAX_X - 1), random.randint(0, self.MAX_Y - 1)
         snakes = []
         for snake in self.SNAKES.values():
             snakes.extend(snake.body)
 
         p = Point(x=x, y=y)
         while p in snakes:
-            x, y = random.randint(0, 58), random.randint(0, 60)
+            x, y = random.randint(0, self.MAX_X - 1), random.randint(0, self.MAX_X - 1)
             p = Point(x=x, y=y)
 
         self.FOODS.append(p)

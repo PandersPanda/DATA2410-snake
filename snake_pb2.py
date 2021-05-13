@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"k\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\x12\r\n\x05isBot\x18\x04 \x01(\x08\x12\x0c\n\x04name\x18\x05 \x01(\t\x12\r\n\x05score\x18\x06 \x01(\x05\"\r\n\x0bJoinRequest\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest2\xab\x02\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12\x1f\n\x0bremoveSnake\x12\x06.Snake\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12+\n\x0b\x61\x64\x64MoreFood\x12\x0c.FoodRequest\x1a\x0c.FoodRequest\"\x00\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"k\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\x12\r\n\x05isBot\x18\x04 \x01(\x08\x12\x0c\n\x04name\x18\x05 \x01(\t\x12\r\n\x05score\x18\x06 \x01(\x05\")\n\x0bJoinRequest\x12\x0c\n\x04maxX\x18\x01 \x01(\x05\x12\x0c\n\x04maxY\x18\x02 \x01(\x05\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest\"/\n\x0e\x42oardDimension\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x32\xab\x02\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12\x1f\n\x0bremoveSnake\x12\x06.Snake\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12+\n\x0b\x61\x64\x64MoreFood\x12\x0c.FoodRequest\x1a\x0c.FoodRequest\"\x00\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -139,6 +139,20 @@ _JOINREQUEST = _descriptor.Descriptor(
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
+    _descriptor.FieldDescriptor(
+      name='maxX', full_name='JoinRequest.maxX', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='maxY', full_name='JoinRequest.maxY', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -152,7 +166,7 @@ _JOINREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=155,
-  serialized_end=168,
+  serialized_end=196,
 )
 
 
@@ -190,8 +204,8 @@ _MOVEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=170,
-  serialized_end=217,
+  serialized_start=198,
+  serialized_end=245,
 )
 
 
@@ -222,8 +236,8 @@ _COLLISIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=219,
-  serialized_end=252,
+  serialized_start=247,
+  serialized_end=280,
 )
 
 
@@ -254,8 +268,8 @@ _COLLISIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=254,
-  serialized_end=295,
+  serialized_start=282,
+  serialized_end=323,
 )
 
 
@@ -279,8 +293,8 @@ _GETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=297,
-  serialized_end=309,
+  serialized_start=325,
+  serialized_end=337,
 )
 
 
@@ -304,8 +318,47 @@ _FOODREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=311,
-  serialized_end=324,
+  serialized_start=339,
+  serialized_end=352,
+)
+
+
+_BOARDDIMENSION = _descriptor.Descriptor(
+  name='BoardDimension',
+  full_name='BoardDimension',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='width', full_name='BoardDimension.width', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='height', full_name='BoardDimension.height', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=354,
+  serialized_end=401,
 )
 
 _SNAKE.fields_by_name['body'].message_type = _POINT
@@ -317,6 +370,7 @@ DESCRIPTOR.message_types_by_name['CollisionRequest'] = _COLLISIONREQUEST
 DESCRIPTOR.message_types_by_name['CollisionResponse'] = _COLLISIONRESPONSE
 DESCRIPTOR.message_types_by_name['GetRequest'] = _GETREQUEST
 DESCRIPTOR.message_types_by_name['FoodRequest'] = _FOODREQUEST
+DESCRIPTOR.message_types_by_name['BoardDimension'] = _BOARDDIMENSION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Point = _reflection.GeneratedProtocolMessageType('Point', (_message.Message,), {
@@ -375,6 +429,13 @@ FoodRequest = _reflection.GeneratedProtocolMessageType('FoodRequest', (_message.
   })
 _sym_db.RegisterMessage(FoodRequest)
 
+BoardDimension = _reflection.GeneratedProtocolMessageType('BoardDimension', (_message.Message,), {
+  'DESCRIPTOR' : _BOARDDIMENSION,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:BoardDimension)
+  })
+_sym_db.RegisterMessage(BoardDimension)
+
 
 
 _SNAKESERVICE = _descriptor.ServiceDescriptor(
@@ -384,8 +445,8 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=327,
-  serialized_end=626,
+  serialized_start=404,
+  serialized_end=703,
   methods=[
   _descriptor.MethodDescriptor(
     name='addSnake',
