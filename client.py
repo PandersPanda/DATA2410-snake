@@ -153,35 +153,7 @@ def game_flow():
     canvas.after(GAME_SPEED, game_flow)
 
 
-def start_multi_game(event=None):
-    start_game_button.destroy()
-    multiplayer_button.destroy()
-    message_label.destroy()
-    score_canvas.pack()
-    canvas.pack()
-    score_canvas.create_text(
-        40, 15,
-        text=f"Score: {len(snake.body) - 3}",
-        fill=snake.color, tag='score',
-        font=('TkDefaultFont', 12)
-    )
-    score_canvas.create_text(
-        200, 15,
-        text=f"Username: " + username,
-        fill=snake.color, tag='username',
-        font=('TkDefaultFont', 12)
-    )
-
-    random_food_thread = threading.Thread(target=random_food, daemon=True)
-    random_food_thread.start()
-    canvas.bind_all('<Key>', change_direction)
-    game_flow()
-
-
-
-def start_single_game(event=None):
-    start_game_button.destroy()
-    multiplayer_button.destroy()
+def start_game(event=None):
     message_label.destroy()
     score_canvas.pack()
     canvas.pack()
@@ -220,10 +192,7 @@ def submit():
     user_name_input.destroy()
     submit_button.destroy()
     title_label.destroy()
-
-    start_game_button.place(x=220, y=200)
-    multiplayer_button.place(x=220, y=350)
-
+    start_game()
 
 def on_closing():
     canvas.delete('all')
@@ -231,22 +200,13 @@ def on_closing():
     root.quit()
 
 
-title_label = tkinter.Label(text='Username:', font=("bold", 20))
+title_label = tkinter.Label(text='Username:', font=("bold", 20), bg="#54b9f0")
 message_label = tkinter.Label(text='', font=("cursive", 11))
 username_var = tkinter.StringVar()
 username = ""
 user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
-submit_button = tkinter.Button(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=submit, text="Submit", bd=3)
-
-start_game_button = tkinter.Button(root, text="Single player")
-multiplayer_button = tkinter.Button(root, text="Multiplayer")
-
-start_game_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                            command=start_single_game)
-
-multiplayer_button.configure(width=10, height=2, bg="red", activebackground="#cf0000", font=("bold", 20),
-                             command=start_multi_game)
+submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                               command=submit, text="Play Game", bd=3)
 
 title_label.place(x=160, y=190)
 user_name_input.place(x=160, y=240)
