@@ -72,9 +72,9 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         new_head = Point(x=snake.body[0].x, y=snake.body[0].y)
 
         if new_direction == "Right" or new_direction == 'Left':
-            new_head.x = (snake.body[0].x + self.DIRECTIONS.get(new_direction, 0)) % 62
+            new_head.x = snake.body[0].x + self.DIRECTIONS.get(new_direction, 0)
         else:
-            new_head.y = (snake.body[0].y + self.DIRECTIONS.get(new_direction, 0)) % 62
+            new_head.y = snake.body[0].y + self.DIRECTIONS.get(new_direction, 0)
 
         if new_head in self.FOODS:
             self.FOODS.remove(new_head)
@@ -93,7 +93,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
         # Self_snake:
-        if Point(x=head_x, y=head_y) in snake.body[1:]:
+        if Point(x=head_x, y=head_y) in snake.body[1:] or head_x in (0, 61) or head_y in (0, 61):
             self.turn_snake_to_food(snake)
             return snake_pb2.CollisionResponse(has_collided=True)  # return True
 
@@ -123,14 +123,14 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         return request
 
     def add_food(self):
-        x, y = random.randint(0, 29), random.randint(0, 30)
+        x, y = random.randint(0, 29*2), random.randint(0, 30*2)
         snakes = []
         for snake in self.SNAKES.values():
             snakes.extend(snake.body)
 
         p = Point(x=x, y=y)
         while p in snakes:
-            x, y = random.randint(0, 29), random.randint(0, 30)
+            x, y = random.randint(0, 58), random.randint(0, 60)
             p = Point(x=x, y=y)
 
         self.FOODS.append(p)
