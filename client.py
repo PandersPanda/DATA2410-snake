@@ -154,21 +154,29 @@ def game_flow():
 
 
 def start_multi_game(event=None):
-    username = username_var.get()
     start_game_button.destroy()
     multiplayer_button.destroy()
+    message_label.destroy()
+    score_canvas.pack()
     canvas.pack()
-    canvas.create_text(
+    score_canvas.create_text(
         40, 15,
         text=f"Score: {len(snake.body) - 3}",
         fill=snake.color, tag='score',
         font=('TkDefaultFont', 12)
     )
+    score_canvas.create_text(
+        200, 15,
+        text=f"Username: " + username,
+        fill=snake.color, tag='username',
+        font=('TkDefaultFont', 12)
+    )
+
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
-
     game_flow()
+
 
 
 def start_single_game(event=None):
