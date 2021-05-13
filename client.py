@@ -225,23 +225,31 @@ def submit():
 
 
 def show_help():
-    user_name_input.destroy()
-    submit_button.destroy()
-    title_label.destroy()
-    help_button.destroy()
+    help_window=tkinter.Tk()
+    help_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
+    help_window.resizable(False, False)
+    help_window.title("Snake Game: Help")
 
-    back_button=tkinter.Button(root, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=starting_screen, text="Back", bd=3)
+    frame1 = tkinter.Frame(help_window)
+    back_button=tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                               command=help_window.destroy, text="Back", bd=3)
 
-    title1 = tkinter.Label(text=f"Gameplay:", font=("bold", 20))
+    title1 = tkinter.Label(help_window, text=f"Gameplay:", font=("bold", 20))
 
-    information_label = tkinter.Label(text=f"Snake is a game where you get bigger by eating food,\n"
+    information_label = tkinter.Label(help_window, text=f"Snake is a game where you get bigger by eating food,\n"
                                            "The goal is to get as big as possible, can you beat the highscore?\n"
                                            "You will die if you either hit one of the borders or crash into\n"
                                            "the other snakes", font=12)
-    back_button.place(x=400, y=0)
+
+    title2 = tkinter.Label(help_window, text=f"Controls:", font=("bold", 20))
+
+    control_label = tkinter.Label(help_window, text=f"You move with your arrow keys or w a s d", font=20)
+
+    back_button.place(x=450, y=0)
     title1.place(x=0, y=0)
-    information_label.place(x=0, y=50)
+    information_label.place(x=0, y=80)
+    title2.place(x=0, y=200)
+    control_label.place(x=0, y=250)
 
 
 def on_closing():
@@ -250,11 +258,7 @@ def on_closing():
     root.quit()
 
 
-def starting_screen():
-    title_label.place(x=160, y=200)
-    user_name_input.place(x=160, y=250)
-    submit_button.place(x=220, y=300)
-    help_button.place(x=220, y=380)
+
 
 
 title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
@@ -267,7 +271,11 @@ submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#
 help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
                              command=show_help, text="Help", bd=3)
 
+title_label.place(x=160, y=200)
+user_name_input.place(x=160, y=250)
+submit_button.place(x=220, y=300)
+help_button.place(x=220, y=380)
+
 root.protocol("WM_DELETE_WINDOW", on_closing)
-starting_screen()
 # start_game()
 root.mainloop()
