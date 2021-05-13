@@ -10,30 +10,36 @@ import sys
 SNAKE_SIZE = 20
 GAME_SPEED = 50
 
-GAME_WIDTH = 620
-GAME_HEIGHT = 620
+WINDOW_WIDTH = 620
+WINDOW_HEIGHT = 620
+
+GAME_WIDTH = 2 * WINDOW_WIDTH
+GAME_HEIGHT = 2 * WINDOW_WIDTH
+
+GRID_ELEMENT_X = GAME_WIDTH // SNAKE_SIZE
+GRID_ELEMENT_Y = GAME_HEIGHT // SNAKE_SIZE
+
+SCROLL_RESPONSE_X = 1 / (2 * GAME_WIDTH / WINDOW_WIDTH)
+SCROLL_FRACTION_X = 1 / GRID_ELEMENT_X
+
+SCROLL_RESPONSE_Y = 1 / (2 * GAME_HEIGHT / WINDOW_HEIGHT)
+SCROLL_FRACTION_Y = 1 / GRID_ELEMENT_Y
 
 BACKGROUND_COLOR = 'grey6'
 BORDER_COLOR = 'red4'
 
 root = tkinter.Tk()
-root.geometry(f'{GAME_WIDTH}x{GAME_HEIGHT}')
+root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
 bg = tkinter.PhotoImage(file="bg.png")
-label1 = tkinter.Label(root, image = bg)
-label1.place(x=0,y=0)
+label1 = tkinter.Label(root, image=bg)
+label1.place(x=0, y=0)
 
-score_canvas = tkinter.Canvas(width=GAME_WIDTH, height=20)
-
-canvas = tkinter.Canvas(width=GAME_WIDTH, height=GAME_HEIGHT-20, highlightthickness=0, background=BACKGROUND_COLOR)
-canvas.config(scrollregion=[0, 0, 2 * GAME_WIDTH, 2 * GAME_HEIGHT])
-canvas.create_rectangle(0, 0, 2 * GAME_WIDTH + 1.5, 2 * GAME_HEIGHT + 1.5,
-                        fill='', outline=BORDER_COLOR, width=2*SNAKE_SIZE)
+score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
 
 channel = grpc.insecure_channel('localhost:50051')
-
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 try:
     snake = stub.addSnake(snake_pb2.JoinRequest())
@@ -42,7 +48,14 @@ except grpc.RpcError:
     sys.exit()
 
 direction = snake.direction
-target = snake_pb2.Point(x=-1, y=-1)
+
+
+canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
+                        highlightthickness=0, background=BACKGROUND_COLOR)
+
+canvas.config(scrollregion=[0, 0, GAME_WIDTH, GAME_HEIGHT])
+canvas.create_rectangle(0, 0, GAME_WIDTH + 1.5, GAME_HEIGHT + 1.5,
+                        fill='', outline=BORDER_COLOR, width=2 * SNAKE_SIZE)
 
 
 def draw_snake(s):
@@ -80,9 +93,8 @@ def move_snake():
     )
     x_lock = snake.body[0].x
     y_lock = snake.body[0].y
-    scroll_fraction = 1 / 62
-    canvas.xview_moveto(x_lock * scroll_fraction - 1 / 5)
-    canvas.yview_moveto(y_lock * scroll_fraction - 1 / 5)
+    canvas.xview_moveto(x_lock * SCROLL_FRACTION_X - SCROLL_RESPONSE_X)
+    canvas.yview_moveto(y_lock * SCROLL_FRACTION_Y - SCROLL_RESPONSE_Y)
 
 
 def change_direction(event):
@@ -193,6 +205,7 @@ def submit():
     submit_button.destroy()
     title_label.destroy()
     start_game()
+
 
 def on_closing():
     canvas.delete('all')

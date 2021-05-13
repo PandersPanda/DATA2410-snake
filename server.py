@@ -93,7 +93,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
         # Self_snake:
-        if Point(x=head_x, y=head_y) in snake.body[1:] or head_x in (0, 61) or head_y in (0, 61):
+        if Point(x=head_x, y=head_y) in snake.body[1:] or head_x in (0, 123) or head_y in (0, 123):
             self.turn_snake_to_food(snake)
             return snake_pb2.CollisionResponse(has_collided=True)  # return True
 
