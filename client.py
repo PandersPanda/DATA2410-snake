@@ -47,8 +47,6 @@ def draw_snake(s):
 
 def draw_food(food, r, color):
     assert 0 < r <= 1
-    assert 0 <= food.x < 30
-    assert 0 <= food.y < 31
 
     food = canvas.create_oval(
         (food.x + .5 + r / 2) * SNAKE_SIZE,
@@ -70,9 +68,9 @@ def move_snake():
     )
     x_lock = snake.body[0].x
     y_lock = snake.body[0].y
-    scroll_fraction = 1/62
-    canvas.xview_moveto(x_lock * scroll_fraction)
-    canvas.yview_moveto(y_lock * scroll_fraction)
+    scroll_fraction = 1 / 62
+    canvas.xview_moveto(x_lock * scroll_fraction - 1/5)
+    canvas.yview_moveto(y_lock * scroll_fraction - 1/5)
 
 
 def change_direction(event):
@@ -159,7 +157,6 @@ def start_multi_game(event=None):
     canvas.bind_all('<Key>', change_direction)
 
     game_flow()
-
 
 
 def start_single_game(event=None):
