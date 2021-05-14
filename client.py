@@ -72,10 +72,7 @@ def showHighscore():
 
     cursor = cnxn.cursor()
     cursor.execute("USE snake_highscores")
-    cursor.execute(
-                   "SELECT * FROM highscores "
-                   "ORDER BY score DESC"
-                   )
+    cursor.execute("SELECT * FROM highscores")
     out = cursor.fetchall()
 
     highscorelist = []
@@ -186,7 +183,15 @@ def game_flow():
     if check_collision():
         snakes = stub.getSnakes(snake_pb2.GetRequest())
         for s in snakes:
+            insert_command = (
+              "INSERT INTO highscores(username, score) "
+              "VALUES (%s, %s) "
+            )
 
+            data = (s.name, len(s.body) - 3)
+
+            cursor.execute(insert_command, data)
+            cursor.commit()
             stub.removeSnake(s)
         print(f"You died, final score for: {len(snake.body) - 3}")
         game_over()
