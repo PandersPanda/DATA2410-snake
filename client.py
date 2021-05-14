@@ -6,6 +6,7 @@ import snake_pb2_grpc
 import time
 import threading
 import sys
+import mysql.connector
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50
@@ -33,6 +34,26 @@ root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
+config = {
+        'user': 'app_user',
+        'password': 'k2znHSJnNlmi5znh',
+        'host': '35.228.86.138',
+    }
+
+cnxn = mysql.connector.connect(**config)
+
+cursor = cnxn.cursor()
+cursor.execute("USE snake_highscores")
+
+insert_command = (
+    "INSERT INTO highscores(username, score) "
+    "VALUES (%s, %s) "
+)
+
+data = (snake.name, len(snake.body) - 3)
+
+cursor.execute(insert_command, data)
+cursor.commit()
 
 
 def show_help():
@@ -80,7 +101,6 @@ def submit():
     submit_button.destroy()
     title_label.destroy()
     start_game()
-
 
 
 bg = tkinter.PhotoImage(file="bg.png")

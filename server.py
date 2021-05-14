@@ -6,18 +6,6 @@ from concurrent import futures
 import random
 import mysql.connector
 
-config = {
-        'user': 'app_user',
-        'password': 'k2znHSJnNlmi5znh',
-        'host': '35.228.86.138',
-    }
-
-cnxn = mysql.connector.connect(**config)
-
-cursor = cnxn.cursor()
-
-cursor.execute("USE snake_highscores")
-
 
 class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
     MAX_X = 31
@@ -126,16 +114,6 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         for s in other_snakes.values():
             if Point(x=head_x, y=head_y) in s.body:
                 self.turn_snake_to_food(snake)
-                insert_command = (
-                    "INSERT INTO highscores(username, score) "
-                    "VALUES (%s, %s) "
-                )
-
-                data = (snake.name, len(snake.body)-3)
-
-                cursor.execute(insert_command, data)
-                cursor.commit()
-
                 return snake_pb2.CollisionResponse(has_collided=True)
 
         return snake_pb2.CollisionResponse(has_collided=False)  # Return False
