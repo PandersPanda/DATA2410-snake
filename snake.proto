@@ -17,6 +17,7 @@ message Snake {
 message JoinRequest {
   int32 maxX = 1;
   int32 maxY = 2;
+  string username = 3;
 }
 
 message MoveRequest {

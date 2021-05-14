@@ -6,22 +6,6 @@ import snake_pb2_grpc
 import time
 import threading
 import sys
-import mysql.connector
-
-config = {
-    'user': 'app_user',
-    'password': 'k2znHSJnNlmi5znh',
-    'host': '35.228.86.138'
-}
-
-cnxn = mysql.connector.connect(**config)
-
-cursor = cnxn.cursor()
-cursor.execute('USE snake_highscores')
-cursor.execute('CREATE TABLE IF NOT EXISTS googlegud('
-               'id int(6) PRIMARY KEY'
-               ') ')
-cnxn.close()
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50
