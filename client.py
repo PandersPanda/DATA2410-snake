@@ -82,6 +82,8 @@ def showHighscore():
     cursor.close()
     cnxn.close()
 
+    return highscorelist
+
 
 def draw_snake(s):
     for p in s.body:
