@@ -131,7 +131,10 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
                     "VALUES (%s, %s) "
                 )
 
-                data = (s.name, )
+                data = (snake.name, len(snake.body)-3)
+
+                cursor.execute(insert_command, data)
+                cursor.commit()
 
                 return snake_pb2.CollisionResponse(has_collided=True)
 
