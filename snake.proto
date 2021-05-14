@@ -9,8 +9,6 @@ message Snake {
   string color = 1;
   string direction = 2;
   repeated Point body = 3;
-  string name = 4;
-  int32 score = 5;
 }
 
 message UsernameRequest {}

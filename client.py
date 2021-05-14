@@ -33,27 +33,18 @@ root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
-
-
-
-
-
-
 bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
 
 score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
+with open('server.crt', 'rb') as f:
+    root_certificate = f.read()
+credentials = grpc.ssl_channel_credentials(root_certificates=root_certificate)
 channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
-
-try:
-    snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
-except grpc.RpcError:
-    print("too many snakes")
-    sys.exit()
-
+snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
 direction = snake.direction
 
 canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
@@ -212,10 +203,11 @@ def game_over():
     replay_button.place(x=220, y=300)
 
     quit_button = tkinter.Button(root, text="Quit", width=10, height=1, bg="red", activebackground="#cf0000",
-                                   font=("bold", 20),
-                                   command=root.quit,
-                                   bd=3)
+                                 font=("bold", 20),
+                                 command=root.quit,
+                                 bd=3)
     quit_button.place(x=220, y=370)
+
 
 def replay(gameover, score, button, button2):
     global snake
@@ -227,6 +219,7 @@ def replay(gameover, score, button, button2):
     snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
     direction = snake.direction
     start_game()
+
 
 def show_help():
     help_window = tkinter.Tk()
@@ -256,6 +249,7 @@ def show_help():
     title2.place(x=0, y=200)
     control_label.place(x=0, y=250)
 
+
 def submit():
     global username
     username = username_var.get()
@@ -274,9 +268,11 @@ def submit():
     title_label.destroy()
     start_game()
 
+
 def on_closing():
     canvas.delete('all')
     root.quit()
+
 
 username_var = tkinter.StringVar()
 username = ""
