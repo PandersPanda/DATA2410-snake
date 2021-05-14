@@ -200,6 +200,7 @@ def game_flow():
                           "VALUES (%s, %s)")
 
         cursor.execute(insert_command, data)
+
         cnxn.commit()
         cursor.close()
         cnxn.close()
