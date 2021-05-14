@@ -183,17 +183,29 @@ def game_flow():
     move_snake()
     if check_collision():
         snakes = stub.getSnakes(snake_pb2.GetRequest())
-        for s in snakes:
-            insert_command = (
-              "INSERT INTO highscores(username, score) "
-              "VALUES (%s, %s) "
-            )
 
-            data = (s.name, len(s.body) - 3)
+        config = {
+            'user': 'app_user',
+            'password': 'k2znHSJnNlmi5znh',
+            'host': '35.228.86.138',
+        }
 
-            cursor.execute(insert_command, data)
-            cursor.commit()
-            stub.removeSnake(s)
+        cnxn = mysql.connector.connect(**config)
+
+        cursor = cnxn.cursor()
+        cursor.execute("USE snake_highscores")
+
+        data = (snake.color, len(snake.body)-3)
+        insert_command = ("INSERT INTO highscores(username, score) "
+                          "VALUES (%s, %s)")
+
+        cursor.execute(insert_command, data)
+        cnxn.commit()
+        cursor.close()
+        cnxn.close()
+
+        stub.removeSnake(snake)
+
         print(f"You died, final score for: {len(snake.body) - 3}")
         game_over()
         return
