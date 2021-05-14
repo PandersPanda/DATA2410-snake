@@ -37,7 +37,7 @@ root.title("Snake Game")
 # Connecting with snake
 with open('server.crt', 'rb') as f:
     creds = grpc.ssl_channel_credentials(f.read())
-channel = grpc.secure_channel('data2410.snakegame.com:50051', creds)
+channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
 try:
@@ -53,7 +53,7 @@ bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
 
-score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
+score_canvas = tkinter.Canvas(width=WINDOW_WIDTH+150, height=20)
 
 canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
                         highlightthickness=0, background=BACKGROUND_COLOR)
@@ -61,6 +61,10 @@ canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
 canvas.config(scrollregion=[0, 0, GAME_WIDTH, GAME_HEIGHT])
 canvas.create_rectangle(0, 0, GAME_WIDTH + 1.5, GAME_HEIGHT + 1.5,
                         fill='', outline=BORDER_COLOR, width=2 * SNAKE_SIZE)
+
+score_window = tkinter.Listbox(width=150, height=WINDOW_HEIGHT, background="white",
+                               font = "Helvetica",
+                               )
 
 
 def showHighscore():
@@ -184,7 +188,6 @@ def update_score():
 def game_flow():
     move_snake()
     if check_collision():
-
         config = {
             'user': 'app_user',
             'password': 'k2znHSJnNlmi5znh',
@@ -196,7 +199,7 @@ def game_flow():
         cursor = cnxn.cursor()
         cursor.execute("USE snake_highscores")
 
-        data = (snake.username, len(snake.body)-3)
+        data = (snake.username, len(snake.body) - 3)
         insert_command = ("INSERT INTO highscores(username, score) "
                           "VALUES (%s, %s)")
 
@@ -213,16 +216,26 @@ def game_flow():
         return
     draw_all_snakes()
     update_score()
+    update_players()
     spawn_foods()
     canvas.after(GAME_SPEED, game_flow)
+
+def update_players():
+    snakes = stub.getSnakes(snake_pb2.GetRequest())
+    n=1
+    score_window.delete(0,'end')
+    for s in snakes:
+        score_window.insert(n, s.username)
+        n += 1
 
 
 def start_game(event=None):
     message_label.destroy()
     score_canvas.pack()
     help_button.destroy()
+    root.geometry(f'{WINDOW_WIDTH+150}x{WINDOW_HEIGHT}')
 
-    canvas.pack()
+    canvas.pack(side=tkinter.LEFT)
     score_canvas.create_text(
         40, 15,
         text=f"Score: {len(snake.body) - 3}",
@@ -235,7 +248,7 @@ def start_game(event=None):
         fill=snake.color, tag='username',
         font=('TkDefaultFont', 12)
     )
-
+    score_window.place(x=WINDOW_WIDTH, y=0)
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
