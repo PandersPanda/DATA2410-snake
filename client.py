@@ -72,7 +72,8 @@ def showHighscore():
 
     cursor = cnxn.cursor()
     cursor.execute("USE snake_highscores")
-    cursor.execute("SELECT * FROM highscores")
+    cursor.execute("SELECT * FROM highscores "
+                   "ORDER BY score")
     out = cursor.fetchall()
 
     highscorelist = []
