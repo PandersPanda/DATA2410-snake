@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"k\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\x12\r\n\x05isBot\x18\x04 \x01(\x08\x12\x0c\n\x04name\x18\x05 \x01(\t\x12\r\n\x05score\x18\x06 \x01(\x05\";\n\x0bJoinRequest\x12\x0c\n\x04maxX\x18\x01 \x01(\x05\x12\x0c\n\x04maxY\x18\x02 \x01(\x05\x12\x10\n\x08username\x18\x03 \x01(\t\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest\"/\n\x0e\x42oardDimension\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x32\xab\x02\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12\x1f\n\x0bremoveSnake\x12\x06.Snake\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12+\n\x0b\x61\x64\x64MoreFood\x12\x0c.FoodRequest\x1a\x0c.FoodRequest\"\x00\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\\\n\x05Snake\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\x12\x14\n\x04\x62ody\x18\x03 \x03(\x0b\x32\x06.Point\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\r\n\x05score\x18\x05 \x01(\x05\"\x11\n\x0fUsernameRequest\")\n\x0bJoinRequest\x12\x0c\n\x04maxX\x18\x01 \x01(\x05\x12\x0c\n\x04maxY\x18\x02 \x01(\x05\"/\n\x0bMoveRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"!\n\x10\x43ollisionRequest\x12\r\n\x05\x63olor\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\"\x0c\n\nGetRequest\"\r\n\x0b\x46oodRequest\"/\n\x0e\x42oardDimension\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x32\xd7\x02\n\x0cSnakeService\x12\"\n\x08\x61\x64\x64Snake\x12\x0c.JoinRequest\x1a\x06.Snake\"\x00\x12\x1f\n\x0bremoveSnake\x12\x06.Snake\x1a\x06.Snake\"\x00\x12#\n\tmoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\"\x00\x12$\n\tgetSnakes\x12\x0b.GetRequest\x1a\x06.Snake\"\x00\x30\x01\x12#\n\x07getFood\x12\x0c.FoodRequest\x1a\x06.Point\"\x00\x30\x01\x12+\n\x0b\x61\x64\x64MoreFood\x12\x0c.FoodRequest\x1a\x0c.FoodRequest\"\x00\x12\x39\n\x0e\x63heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\"\x00\x12*\n\x0csendUsername\x12\x10.UsernameRequest\x1a\x06.Snake\"\x00\x62\x06proto3'
 )
 
 
@@ -94,22 +94,15 @@ _SNAKE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='isBot', full_name='Snake.isBot', index=3,
-      number=4, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='name', full_name='Snake.name', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      name='name', full_name='Snake.name', index=3,
+      number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='score', full_name='Snake.score', index=5,
-      number=6, type=5, cpp_type=1, label=1,
+      name='score', full_name='Snake.score', index=4,
+      number=5, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -127,7 +120,32 @@ _SNAKE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=46,
-  serialized_end=153,
+  serialized_end=138,
+)
+
+
+_USERNAMEREQUEST = _descriptor.Descriptor(
+  name='UsernameRequest',
+  full_name='UsernameRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=140,
+  serialized_end=157,
 )
 
 
@@ -153,13 +171,6 @@ _JOINREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='username', full_name='JoinRequest.username', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -172,8 +183,8 @@ _JOINREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=155,
-  serialized_end=214,
+  serialized_start=159,
+  serialized_end=200,
 )
 
 
@@ -211,8 +222,8 @@ _MOVEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=216,
-  serialized_end=263,
+  serialized_start=202,
+  serialized_end=249,
 )
 
 
@@ -243,8 +254,8 @@ _COLLISIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=265,
-  serialized_end=298,
+  serialized_start=251,
+  serialized_end=284,
 )
 
 
@@ -275,8 +286,8 @@ _COLLISIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=300,
-  serialized_end=341,
+  serialized_start=286,
+  serialized_end=327,
 )
 
 
@@ -300,8 +311,8 @@ _GETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=343,
-  serialized_end=355,
+  serialized_start=329,
+  serialized_end=341,
 )
 
 
@@ -325,8 +336,8 @@ _FOODREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=357,
-  serialized_end=370,
+  serialized_start=343,
+  serialized_end=356,
 )
 
 
@@ -364,13 +375,14 @@ _BOARDDIMENSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=372,
-  serialized_end=419,
+  serialized_start=358,
+  serialized_end=405,
 )
 
 _SNAKE.fields_by_name['body'].message_type = _POINT
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['Snake'] = _SNAKE
+DESCRIPTOR.message_types_by_name['UsernameRequest'] = _USERNAMEREQUEST
 DESCRIPTOR.message_types_by_name['JoinRequest'] = _JOINREQUEST
 DESCRIPTOR.message_types_by_name['MoveRequest'] = _MOVEREQUEST
 DESCRIPTOR.message_types_by_name['CollisionRequest'] = _COLLISIONREQUEST
@@ -393,6 +405,13 @@ Snake = _reflection.GeneratedProtocolMessageType('Snake', (_message.Message,), {
   # @@protoc_insertion_point(class_scope:Snake)
   })
 _sym_db.RegisterMessage(Snake)
+
+UsernameRequest = _reflection.GeneratedProtocolMessageType('UsernameRequest', (_message.Message,), {
+  'DESCRIPTOR' : _USERNAMEREQUEST,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:UsernameRequest)
+  })
+_sym_db.RegisterMessage(UsernameRequest)
 
 JoinRequest = _reflection.GeneratedProtocolMessageType('JoinRequest', (_message.Message,), {
   'DESCRIPTOR' : _JOINREQUEST,
@@ -452,8 +471,8 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=422,
-  serialized_end=721,
+  serialized_start=408,
+  serialized_end=751,
   methods=[
   _descriptor.MethodDescriptor(
     name='addSnake',
@@ -522,6 +541,16 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_COLLISIONREQUEST,
     output_type=_COLLISIONRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='sendUsername',
+    full_name='SnakeService.sendUsername',
+    index=7,
+    containing_service=None,
+    input_type=_USERNAMEREQUEST,
+    output_type=_SNAKE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

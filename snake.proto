@@ -9,15 +9,15 @@ message Snake {
   string color = 1;
   string direction = 2;
   repeated Point body = 3;
-  bool isBot = 4;
-  string name = 5;
-  int32 score = 6;
+  string name = 4;
+  int32 score = 5;
 }
+
+message UsernameRequest {}
 
 message JoinRequest {
   int32 maxX = 1;
   int32 maxY = 2;
-  string username = 3;
 }
 
 message MoveRequest {
@@ -48,4 +48,5 @@ service SnakeService {
   rpc getFood (FoodRequest) returns (stream Point) {}
   rpc addMoreFood (FoodRequest) returns (FoodRequest) {}
   rpc checkCollision(CollisionRequest) returns (CollisionResponse){}
+  rpc sendUsername(UsernameRequest) returns (Snake){}
 }
