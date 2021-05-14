@@ -35,8 +35,6 @@ root.resizable(False, False)
 root.title("Snake Game")
 
 # Connecting with snake
-with open('server.crt', 'rb') as f:
-    creds = grpc.ssl_channel_credentials(f.read())
 channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
