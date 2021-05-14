@@ -37,7 +37,7 @@ root.title("Snake Game")
 # Connecting with snake
 with open('server.crt', 'rb') as f:
     creds = grpc.ssl_channel_credentials(f.read())
-channel = grpc.secure_channel('127.0.0.1:50051', creds)
+channel = grpc.secure_channel('data2410.snakegame.com:50051', creds)
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
 try:

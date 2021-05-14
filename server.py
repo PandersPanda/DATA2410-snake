@@ -162,7 +162,9 @@ def serve():
         private_key = f.read()
     with open('server.crt', 'rb') as f:
         certificate_chain = f.read()
-    server_credentials = grpc.ssl_server_credentials(((private_key, certificate_chain), ))
+    server_credentials = grpc.ssl_server_credentials(
+        ((private_key, certificate_chain), )
+    )
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     snake_pb2_grpc.add_SnakeServiceServicer_to_server(
         SnakeGame(), server
