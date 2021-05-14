@@ -6,22 +6,6 @@ import snake_pb2_grpc
 import time
 import threading
 import sys
-import mysql.connector
-
-config = {
-    'user': 'app_user',
-    'password': 'k2znHSJnNlmi5znh',
-    'host': '35.228.86.138'
-}
-
-cnxn = mysql.connector.connect(**config)
-
-cursor = cnxn.cursor()
-cursor.execute('USE snake_highscores')
-cursor.execute('CREATE TABLE IF NOT EXISTS googlegud('
-               'id int(6) PRIMARY KEY'
-               ') ')
-cnxn.close()
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50
@@ -49,6 +33,56 @@ root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
+
+
+def show_help():
+    help_window = tkinter.Tk()
+    help_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
+    help_window.resizable(False, False)
+    help_window.title("Snake Game: Help")
+
+    frame1 = tkinter.Frame(help_window)
+    back_button = tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=help_window.destroy, text="Back", bd=3)
+
+    title1 = tkinter.Label(help_window, text=f"Gameplay:", font=("bold", 20))
+
+    information_label = tkinter.Label(help_window, text=f"Snake is a game where you get bigger by eating food,\n"
+                                                        "The goal is to get as big as possible, can you beat the highscore?\n"
+                                                        "You will die if you either hit one of the borders or crash into\n"
+                                                        "the other snakes", font=12)
+
+    title2 = tkinter.Label(help_window, text=f"Controls:", font=("bold", 20))
+
+    control_label = tkinter.Label(help_window, text=f"You move with your arrow keys or w a s d", font=20)
+
+    back_button.place(x=450, y=0)
+    title1.place(x=0, y=0)
+    information_label.place(x=0, y=80)
+    title2.place(x=0, y=200)
+    control_label.place(x=0, y=250)
+
+def submit():
+    global username
+    username = username_var.get()
+
+    if username == "":
+        message_label.configure(text="Please enter a username")
+        message_label.place(x=220, y=450)
+        return
+    if len(username) > 15:
+        message_label.configure(text="Enter a username that is under 15 characters")
+        message_label.place(x=220, y=450)
+        return
+
+    user_name_input.destroy()
+    submit_button.destroy()
+    title_label.destroy()
+    start_game()
+
+
+
 bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
@@ -56,11 +90,30 @@ label1.place(x=0, y=0)
 score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
 channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
+
+username_var = tkinter.StringVar()
+username = ""
+
+title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
+message_label = tkinter.Label(text='', font=("cursive", 11))
+user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
+submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                               command=submit, text="Play Game", bd=3)
+help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                             command=show_help, text="Help", bd=3)
+
+title_label.place(x=160, y=200)
+user_name_input.place(x=160, y=250)
+submit_button.place(x=220, y=300)
+help_button.place(x=220, y=380)
+
+
+
+
 try:
     snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
 except grpc.RpcError:
-    print("This room is full of snakes!")
-    sys.exit()
+    message_label.config(text="Could not connect to the server, try again")
 
 direction = snake.direction
 
@@ -236,74 +289,9 @@ def replay(gameover, score, button, button2):
     direction = snake.direction
     start_game()
 
-
-def submit():
-    global username
-    username = username_var.get()
-
-    if username == "":
-        message_label.configure(text="Please enter a username")
-        message_label.place(x=220, y=450)
-        return
-    if len(username) > 15:
-        message_label.configure(text="Enter a username that is under 15 characters")
-        message_label.place(x=220, y=450)
-        return
-
-    user_name_input.destroy()
-    submit_button.destroy()
-    title_label.destroy()
-    start_game()
-
-
-def show_help():
-    help_window = tkinter.Tk()
-    help_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
-    help_window.resizable(False, False)
-    help_window.title("Snake Game: Help")
-
-    frame1 = tkinter.Frame(help_window)
-    back_button = tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000",
-                                 font=("bold", 20),
-                                 command=help_window.destroy, text="Back", bd=3)
-
-    title1 = tkinter.Label(help_window, text=f"Gameplay:", font=("bold", 20))
-
-    information_label = tkinter.Label(help_window, text=f"Snake is a game where you get bigger by eating food,\n"
-                                                        "The goal is to get as big as possible, can you beat the highscore?\n"
-                                                        "You will die if you either hit one of the borders or crash into\n"
-                                                        "the other snakes", font=12)
-
-    title2 = tkinter.Label(help_window, text=f"Controls:", font=("bold", 20))
-
-    control_label = tkinter.Label(help_window, text=f"You move with your arrow keys or w a s d", font=20)
-
-    back_button.place(x=450, y=0)
-    title1.place(x=0, y=0)
-    information_label.place(x=0, y=80)
-    title2.place(x=0, y=200)
-    control_label.place(x=0, y=250)
-
-
 def on_closing():
     canvas.delete('all')
     root.quit()
-
-
-title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
-message_label = tkinter.Label(text='', font=("cursive", 11))
-username_var = tkinter.StringVar()
-username = ""
-user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
-submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                               command=submit, text="Play Game", bd=3)
-help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
-                             command=show_help, text="Help", bd=3)
-
-title_label.place(x=160, y=200)
-user_name_input.place(x=160, y=250)
-submit_button.place(x=220, y=300)
-help_button.place(x=220, y=380)
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
 # start_game()
