@@ -6,6 +6,7 @@ import snake_pb2_grpc
 import time
 import threading
 import sys
+import mysql.connector
 
 SNAKE_SIZE = 20
 GAME_SPEED = 50
@@ -33,18 +34,42 @@ root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 root.resizable(False, False)
 root.title("Snake Game")
 
+config = {
+        'user': 'app_user',
+        'password': 'k2znHSJnNlmi5znh',
+        'host': '35.228.86.138',
+    }
+
+cnxn = mysql.connector.connect(**config)
+
+cursor = cnxn.cursor()
+cursor.execute("USE snake_highscores")
+
+insert_command = (
+    "INSERT INTO highscores(username, score) "
+    "VALUES (%s, %s) "
+)
+
+data = (snake.name, len(snake.body) - 3)
+
+cursor.execute(insert_command, data)
+cursor.commit()
+
 bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
 
 score_canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=20)
-with open('server.crt', 'rb') as f:
-    root_certificate = f.read()
-credentials = grpc.ssl_channel_credentials(root_certificates=root_certificate)
 channel = grpc.insecure_channel('localhost:50051')
 stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
-snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
+
+try:
+    snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
+except grpc.RpcError:
+    print("too many snakes")
+    sys.exit()
+
 direction = snake.direction
 
 canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
@@ -203,11 +228,10 @@ def game_over():
     replay_button.place(x=220, y=300)
 
     quit_button = tkinter.Button(root, text="Quit", width=10, height=1, bg="red", activebackground="#cf0000",
-                                 font=("bold", 20),
-                                 command=root.quit,
-                                 bd=3)
+                                   font=("bold", 20),
+                                   command=root.quit,
+                                   bd=3)
     quit_button.place(x=220, y=370)
-
 
 def replay(gameover, score, button, button2):
     global snake
@@ -220,14 +244,12 @@ def replay(gameover, score, button, button2):
     direction = snake.direction
     start_game()
 
-
 def show_help():
     help_window = tkinter.Tk()
     help_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
     help_window.resizable(False, False)
     help_window.title("Snake Game: Help")
 
-    frame1 = tkinter.Frame(help_window)
     back_button = tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000",
                                  font=("bold", 20),
                                  command=help_window.destroy, text="Back", bd=3)
@@ -249,6 +271,17 @@ def show_help():
     title2.place(x=0, y=200)
     control_label.place(x=0, y=250)
 
+def show_highscores():
+    score_window = tkinter.Tk()
+    score_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
+    score_window.resizable(False, False)
+    score_window.title("Snake Game: Highscores")
+
+    back_button = tkinter.Button(score_window, width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=score_window.destroy, text="Back", bd=3)
+
+    back_button.place(x=450, y=0)
 
 def submit():
     global username
@@ -268,11 +301,9 @@ def submit():
     title_label.destroy()
     start_game()
 
-
 def on_closing():
     canvas.delete('all')
     root.quit()
-
 
 username_var = tkinter.StringVar()
 username = ""
@@ -284,11 +315,14 @@ submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#
                                command=submit, text="Play Game", bd=3)
 help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
                              command=show_help, text="Help", bd=3)
+high_score_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                             command=show_help, text="Highscores", bd=3)
 
 title_label.place(x=160, y=200)
 user_name_input.place(x=160, y=250)
 submit_button.place(x=220, y=300)
 help_button.place(x=220, y=380)
+high_score_button.place(x=220, y=460)
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
 # start_game()
