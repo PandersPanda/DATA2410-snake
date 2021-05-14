@@ -35,10 +35,6 @@ root.title("Snake Game")
 
 
 
-
-
-
-
 bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
@@ -234,7 +230,6 @@ def show_help():
     help_window.resizable(False, False)
     help_window.title("Snake Game: Help")
 
-    frame1 = tkinter.Frame(help_window)
     back_button = tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000",
                                  font=("bold", 20),
                                  command=help_window.destroy, text="Back", bd=3)
@@ -255,6 +250,18 @@ def show_help():
     information_label.place(x=0, y=80)
     title2.place(x=0, y=200)
     control_label.place(x=0, y=250)
+
+def show_highscores():
+    score_window = tkinter.Tk()
+    score_window.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
+    score_window.resizable(False, False)
+    score_window.title("Snake Game: Highscores")
+
+    back_button = tkinter.Button(score_window, width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=score_window.destroy, text="Back", bd=3)
+
+    back_button.place(x=450, y=0)
 
 def submit():
     global username
@@ -288,11 +295,14 @@ submit_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#
                                command=submit, text="Play Game", bd=3)
 help_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
                              command=show_help, text="Help", bd=3)
+high_score_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                             command=show_help, text="Highscores", bd=3)
 
 title_label.place(x=160, y=200)
 user_name_input.place(x=160, y=250)
 submit_button.place(x=220, y=300)
 help_button.place(x=220, y=380)
+high_score_button.place(x=220, y=460)
 
 root.protocol("WM_DELETE_WINDOW", on_closing)
 # start_game()
