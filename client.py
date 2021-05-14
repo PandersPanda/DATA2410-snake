@@ -74,7 +74,7 @@ def showHighscore():
 
     cursor = cnxn.cursor()
     cursor.execute("USE snake_highscores")
-    cursor.execute("SELECT * FROM highscores "
+    cursor.execute("SELECT username, score FROM highscores "
                    "ORDER BY score DESC")
     out = cursor.fetchall()
 
@@ -184,7 +184,6 @@ def update_score():
 def game_flow():
     move_snake()
     if check_collision():
-        snakes = stub.getSnakes(snake_pb2.GetRequest())
 
         config = {
             'user': 'app_user',
@@ -197,7 +196,7 @@ def game_flow():
         cursor = cnxn.cursor()
         cursor.execute("USE snake_highscores")
 
-        data = (snake.color, len(snake.body)-3)
+        data = (snake.username, len(snake.body)-3)
         insert_command = ("INSERT INTO highscores(username, score) "
                           "VALUES (%s, %s)")
 
@@ -355,6 +354,7 @@ def submit():
 
 def on_closing():
     canvas.delete('all')
+    stub.removeSnake(snake)
     root.quit()
 
 
