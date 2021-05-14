@@ -1,6 +1,3 @@
-test = {
-    'Up': (15, 14),
-    'Down': (16, 18)
-}
+red_string = 'Red'
 
-print(test['Up'])
+print(f'\'{red_string}\'')
