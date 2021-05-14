@@ -181,19 +181,9 @@ def update_score():
 def game_flow():
     move_snake()
     if check_collision():
-        snakes = stub.getSnakes(snake_pb2.GetRequest())
-        for s in snakes:
-            insert_command = (
-              "INSERT INTO highscores(username, score) "
-              "VALUES (%s, %s) "
-            )
 
-            data = (s.name, len(s.body) - 3)
-
-            cursor.execute(insert_command, data)
-            cursor.commit()
-            stub.removeSnake(s)
         print(f"You died, final score for: {len(snake.body) - 3}")
+        stub.removeSnake(snake)
         game_over()
         return
     draw_all_snakes()
@@ -301,6 +291,18 @@ def show_highscores():
                                  command=score_window.destroy, text="Back", bd=3)
 
     back_button.place(x=450, y=0)
+
+    high_score_list = tkinter.Listbox(score_window, height=15, width=25,
+                                      font="bold")
+
+    highscores = showHighscore()
+    n=1
+    for h in highscores:
+        high_score_list.insert(n, h)
+        n+=1
+
+    high_score_list.place(x=175,y=200)
+
 
 def submit():
     global username
