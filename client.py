@@ -50,10 +50,10 @@ insert_command = (
     "VALUES (%s, %s) "
 )
 
-data = (snake.name, len(snake.body) - 3)
+# data = (snake.name, len(snake.body) - 3)
 
-cursor.execute(insert_command, data)
-cursor.commit()
+# cursor.execute(insert_command, data)
+# cursor.commit()
 
 bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)

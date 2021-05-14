@@ -56,8 +56,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         snake = Snake(
             color=self.AVAILABLE_COLORS.pop(),
             direction=random.choice(directions),
-            body=body,
-            name=random.randint(1, 10)
+            body=body
         )
         self.SNAKES.update({snake.color: snake})
         return snake
