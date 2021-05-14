@@ -188,26 +188,60 @@ def update_score():
 def game_flow():
     move_snake()
     if check_collision():
+        # Insert highscore into the database when snake dies
+
+        exists_checklist = showHighscore()
+
+        exists = False
+
+        # If this user did not get a new highscore we don't need to update the database
+        newHighscore = False
+
+        # Check to see if this user already is in the table
+        for row in exists_checklist:
+            if snake.username in row:
+                exists = True
+                currentScore = row[1]
+                if len(snake.body)-3 > currentScore:
+                    newHighscore = True
+            break
+
         config = {
             'user': 'app_user',
             'password': 'k2znHSJnNlmi5znh',
             'host': '35.228.86.138',
+            'database': 'snake_highscores'
         }
 
-        cnxn = mysql.connector.connect(**config)
+        cnx = mysql.connector.connect(**config)
 
-        cursor = cnxn.cursor()
-        cursor.execute("USE snake_highscores")
+        cursor = cnx.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS highscores "
+                       "(id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+                       "username VARCHAR(30) NOT NULL, "
+                       "score int(6))")
 
-        data = (snake.username, len(snake.body) - 3)
-        insert_command = ("INSERT INTO highscores(username, score) "
-                          "VALUES (%s, %s)")
+        # Check if username already is in database
 
-        cursor.execute(insert_command, data)
+        if exists and newHighscore:
+            query = "UPDATE highscores SET score=%s WHERE username=%s"
+            data = (len(snake.body)-3, snake.username)
+            cursor.execute(query, data)
+            cnx.commit()
 
-        cnxn.commit()
+        elif exists and not newHighscore:
+            pass
+
+        elif not exists:
+            data = (snake.username, len(snake.body) - 3)
+            insert_command = ("INSERT INTO highscores(username, score) "
+                              "VALUES (%s, %s)")
+
+            cursor.execute(insert_command, data)
+            cnx.commit()
+
         cursor.close()
-        cnxn.close()
+        cnx.close()
 
         stub.removeSnake(snake)
 

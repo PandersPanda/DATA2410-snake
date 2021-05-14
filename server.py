@@ -4,7 +4,6 @@ import snake_pb2
 from snake_pb2 import Snake, Point
 from concurrent import futures
 import random
-import mysql.connector
 
 
 class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
