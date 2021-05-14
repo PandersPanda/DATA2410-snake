@@ -315,6 +315,18 @@ def show_highscores():
 
     back_button.place(x=450, y=0)
 
+    high_score_list = tkinter.Listbox(score_window, height=15, width=25,
+                                      font="bold")
+
+    highscores = showHighscore()
+    n=1
+    for h in highscores:
+        high_score_list.insert(n, h)
+        n+=1
+
+    high_score_list.place(x=175,y=200)
+
+
 def submit():
     global username
     username = username_var.get()
