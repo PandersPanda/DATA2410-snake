@@ -47,27 +47,6 @@ except grpc.RpcError as e:
 
 direction = snake.direction
 
-config = {
-    'user': 'app_user',
-    'password': 'k2znHSJnNlmi5znh',
-    'host': '35.228.86.138',
-}
-
-cnxn = mysql.connector.connect(**config)
-
-cursor = cnxn.cursor()
-cursor.execute("USE snake_highscores")
-
-insert_command = (
-    "INSERT INTO highscores(username, score) "
-    "VALUES (%s, %s) "
-)
-
-#data = (snake.name, len(snake.body) - 3)
-
-#cursor.execute(insert_command, data)
-#cursor.commit()
-
 bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
@@ -80,6 +59,28 @@ canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
 canvas.config(scrollregion=[0, 0, GAME_WIDTH, GAME_HEIGHT])
 canvas.create_rectangle(0, 0, GAME_WIDTH + 1.5, GAME_HEIGHT + 1.5,
                         fill='', outline=BORDER_COLOR, width=2 * SNAKE_SIZE)
+
+
+def showHighscore():
+    config = {
+        'user': 'app_user',
+        'password': 'k2znHSJnNlmi5znh',
+        'host': '35.228.86.138',
+    }
+
+    cnxn = mysql.connector.connect(**config)
+
+    cursor = cnxn.cursor()
+    cursor.execute("USE snake_highscores")
+    cursor.execute("SELECT * FROM highscores")
+    out = cursor.fetchall()
+
+    highscorelist = []
+    for row in out:
+        highscorelist.append(row)
+
+    cursor.close()
+    cnxn.close()
 
 
 def draw_snake(s):
@@ -180,6 +181,15 @@ def game_flow():
     if check_collision():
         snakes = stub.getSnakes(snake_pb2.GetRequest())
         for s in snakes:
+            insert_command = (
+              "INSERT INTO highscores(username, score) "
+              "VALUES (%s, %s) "
+            )
+
+            data = (s.name, len(s.body) - 3)
+
+            cursor.execute(insert_command, data)
+            cursor.commit()
             stub.removeSnake(s)
         print(f"You died, final score for: {len(snake.body) - 3}")
         game_over()
