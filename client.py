@@ -297,16 +297,17 @@ def show_highscores():
                                       font="bold")
 
     highscores = showHighscore()
-    n=1
+    n = 1
     for h in highscores:
         high_score_list.insert(n, h)
-        n+=1
+        n += 1
 
-    high_score_list.place(x=175,y=200)
+    high_score_list.place(x=175, y=200)
 
 
 def submit():
     global username
+    global snake
     username = username_var.get()
 
     if username == "":
@@ -317,6 +318,8 @@ def submit():
         message_label.configure(text="Enter a username that is under 15 characters")
         message_label.place(x=220, y=222)
         return
+
+    snake = stub.addUsername(snake_pb2.UsernameRequest(username=username, color=snake.color))
 
     user_name_input.destroy()
     submit_button.destroy()

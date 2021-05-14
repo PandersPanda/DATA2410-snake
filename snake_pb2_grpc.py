@@ -49,8 +49,8 @@ class SnakeServiceStub(object):
                 request_serializer=snake__pb2.CollisionRequest.SerializeToString,
                 response_deserializer=snake__pb2.CollisionResponse.FromString,
                 )
-        self.sendUsername = channel.unary_unary(
-                '/SnakeService/sendUsername',
+        self.addUsername = channel.unary_unary(
+                '/SnakeService/addUsername',
                 request_serializer=snake__pb2.UsernameRequest.SerializeToString,
                 response_deserializer=snake__pb2.Snake.FromString,
                 )
@@ -101,7 +101,7 @@ class SnakeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def sendUsername(self, request, context):
+    def addUsername(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -145,8 +145,8 @@ def add_SnakeServiceServicer_to_server(servicer, server):
                     request_deserializer=snake__pb2.CollisionRequest.FromString,
                     response_serializer=snake__pb2.CollisionResponse.SerializeToString,
             ),
-            'sendUsername': grpc.unary_unary_rpc_method_handler(
-                    servicer.sendUsername,
+            'addUsername': grpc.unary_unary_rpc_method_handler(
+                    servicer.addUsername,
                     request_deserializer=snake__pb2.UsernameRequest.FromString,
                     response_serializer=snake__pb2.Snake.SerializeToString,
             ),
@@ -280,7 +280,7 @@ class SnakeService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def sendUsername(request,
+    def addUsername(request,
             target,
             options=(),
             channel_credentials=None,
@@ -290,7 +290,7 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/sendUsername',
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/addUsername',
             snake__pb2.UsernameRequest.SerializeToString,
             snake__pb2.Snake.FromString,
             options, channel_credentials,

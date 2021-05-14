@@ -9,9 +9,13 @@ message Snake {
   string color = 1;
   string direction = 2;
   repeated Point body = 3;
+  string username = 4;
 }
 
-message UsernameRequest {}
+message UsernameRequest {
+  string username = 1;
+  string color = 2;
+}
 
 message JoinRequest {
   int32 maxX = 1;
@@ -46,5 +50,5 @@ service SnakeService {
   rpc getFood (FoodRequest) returns (stream Point) {}
   rpc addMoreFood (FoodRequest) returns (FoodRequest) {}
   rpc checkCollision(CollisionRequest) returns (CollisionResponse){}
-  rpc sendUsername(UsernameRequest) returns (Snake){}
+  rpc addUsername(UsernameRequest) returns (Snake){}
 }
