@@ -63,8 +63,7 @@ canvas.create_rectangle(0, 0, GAME_WIDTH + 1.5, GAME_HEIGHT + 1.5,
                         fill='', outline=BORDER_COLOR, width=2 * SNAKE_SIZE)
 
 score_window = tkinter.Listbox(width=150, height=WINDOW_HEIGHT, background="white",
-                               font = "Helvetica",
-                               )
+                               font=("Helvetica",10))
 
 
 def showHighscore():
@@ -256,8 +255,8 @@ def game_flow():
 
 def update_players():
     snakes = stub.getSnakes(snake_pb2.GetRequest())
-    n=1
-    score_window.delete(0,'end')
+    n=2
+    score_window.delete(1,'end')
     for s in snakes:
         score_window.insert(n, s.username)
         n += 1
@@ -273,16 +272,17 @@ def start_game(event=None):
     score_canvas.create_text(
         40, 15,
         text=f"Score: {len(snake.body) - 3}",
-        fill=snake.color, tag='score',
+        fill="black", tag='score',
         font=('TkDefaultFont', 12)
     )
     score_canvas.create_text(
         200, 15,
         text=f"Username: " + username,
-        fill=snake.color, tag='username',
+        fill="black", tag='username',
         font=('TkDefaultFont', 12)
     )
     score_window.place(x=WINDOW_WIDTH, y=0)
+    score_window.insert(1, "Players connected")
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
@@ -290,6 +290,7 @@ def start_game(event=None):
 
 
 def game_over():
+    root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
     canvas.pack_forget()
     gameover_lb = tkinter.Label(root, text="Game Over", font=("Bold", 35))
     gameover_lb.place(x=200, y=200)
