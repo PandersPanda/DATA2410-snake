@@ -150,18 +150,15 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
         return CollisionResponse(has_collided=False)
 
+    def KillSnake(self, request, context):
+        snake = self.SNAKES.get(request.name, None)
+        self.turn_snake_to_food(snake)
+        return snake
+
     def turn_snake_to_food(self, snake):
         self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
         snake = self.SNAKES.pop(snake.name, None)
-        self.cursor.execute("USE snake_highscores")
-        data = (snake.name, len(snake.body) - 3)
-        insert_command = ("INSERT INTO highscores(username, score) "
-                          "VALUES (%s, %s)")
-        self.cursor.execute(insert_command, data)
-
-        self.cnxn.commit()
-        self.cursor.close()
-        self.cnxn.close()
+        self.update_highscore(snake)
         self.AVAILABLE_COLORS.append(snake.color)
 
     def add_food(self):
@@ -180,10 +177,18 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
         self.FOODS.append(p)
 
-    def KillSnake(self, request, context):
-        snake = self.SNAKES.get(request.name, None)
-        self.turn_snake_to_food(snake)
-        return snake
+    def update_highscore(self, snake):
+        self.cursor.execute("USE snake_highscores")
+        data = (snake.name, len(snake.body) - 3)
+        insert_command = (
+            "INSERT INTO highscores(username, score) "
+            "VALUES (%s, %s)"
+        )
+        self.cursor.execute(insert_command, data)
+
+        self.cnxn.commit()
+        self.cursor.close()
+        self.cnxn.close()
 
 
 def serve():
