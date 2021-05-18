@@ -134,9 +134,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
             yield food
 
     def addMoreFood(self, request, context):
-        food_count = len(self.FOODS)
-
-        if food_count < 50:
+        if len(self.FOODS) < 50:
             self.add_food()
         return request
 
