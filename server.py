@@ -25,8 +25,6 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         'password': 'k2znHSJnNlmi5znh',
         'host': '35.228.86.138',
     }
-    cnxn = mysql.connector.connect(**config)
-    cursor = cnxn.cursor()
 
     def GetGameConfigurations(self, request, context):
         window_width = 600
@@ -178,17 +176,40 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         self.FOODS.append(p)
 
     def update_highscore(self, snake):
-        self.cursor.execute("USE snake_highscores")
-        data = (snake.name, len(snake.body) - 3)
-        insert_command = (
-            "INSERT INTO highscores(username, score) "
-            "VALUES (%s, %s)"
-        )
-        self.cursor.execute(insert_command, data)
+        cnxn = mysql.connector.connect(**self.config)
+        cursor = cnxn.cursor(buffered=True)
+        cursor.execute("USE snake_highscores")
 
-        self.cnxn.commit()
-        self.cursor.close()
-        self.cnxn.close()
+        # Create table if the table doesn't exists:
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS highscores "
+            "("
+            "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+            "username VARCHAR(30) NOT NULL, "
+            "score int(6)"
+            ")"
+        )
+
+        # Check if username exists in table
+        cursor.execute(
+            f"SELECT username, score FROM highscores "
+            f"WHERE username = '{snake.name}'"
+        )
+        out = cursor.fetchall()
+        score = len(snake.body) - 3
+        if len(out) == 1:
+            if score > out[0][1]:  # Update highscore if user got a new high score
+                query = "UPDATE highscores SET score=%s WHERE username=%s"
+                data = (score, snake.name)
+                cursor.execute(query, data)
+                cnxn.commit()
+        else:  # User does not exists
+            query = "INSERT INTO highscores(username, score) VALUES (%s, %s)"
+            data = (snake.name, score)
+            cursor.execute(query, data)
+            cnxn.commit()
+        cursor.close()
+        cnxn.close()
 
 
 def serve():

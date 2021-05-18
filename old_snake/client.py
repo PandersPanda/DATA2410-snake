@@ -217,9 +217,11 @@ def game_flow():
 
         cursor = cnx.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS highscores "
-                       "(id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+                       "("
+                       "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
                        "username VARCHAR(30) NOT NULL, "
-                       "score int(6))")
+                       "score int(6)"
+                       ")")
 
         # Check if username already is in database
 
