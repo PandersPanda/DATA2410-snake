@@ -60,14 +60,24 @@ message KillSnakeRequest {
   string name = 1;
 }
 
+message Score {
+  string name = 1;
+  string color = 2;
+  int32 score = 3;
+}
+
+message ScoreResponse {
+  repeated Score scores = 1;
+}
 
 service SnakeService {
   rpc GetGameConfigurations(GetRequest) returns (GameConfig);
   rpc JoinGame(JoinRequest) returns (Snake);
   rpc MoveSnake(MoveRequest) returns (Snake);
   rpc GetAllSnakes(Point) returns (stream SnakeSegment);
-  rpc GetFood(GetRequest) returns (stream Point);
+  rpc GetFood(Point) returns (stream Point);
   rpc AddMoreFood(GetRequest) returns (Point);
   rpc CheckCollision(CollisionRequest) returns (CollisionResponse);
   rpc KillSnake(KillSnakeRequest) returns (Snake);
+  rpc GetCurrentPlayerScores(GetRequest) returns (ScoreResponse);
 }

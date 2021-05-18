@@ -3,6 +3,9 @@ import grpc
 import snake_pb2
 import snake_pb2_grpc
 import sys
+import threading
+import random
+import time
 
 root = tkinter.Tk()
 game_canvas = None
@@ -73,6 +76,17 @@ def draw_all_snakes():
         draw_segment(s)
 
 
+def replay(tkinter_objects):
+    global snake
+    global direction
+    for o in tkinter_objects:
+        o.destroy()
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    snake = stub.JoinGame(snake_pb2.JoinRequest(name=snake.name))
+    direction = snake.direction
+    start_game()
+
+
 def game_over():
     root.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
 
@@ -82,12 +96,12 @@ def game_over():
     game_over_lb = tkinter.Label(root, text="Game Over", font=("Bold", 35))
     game_over_lb.place(x=200, y=200)
 
-    score_lb = tkinter.Label(root, text=f"Your score was {len(snake.body) - 3}")
+    score_lb = tkinter.Label(root, text=f"Your final score is {len(snake.body) - 3} points.")
     score_lb.place(x=200, y=260)
 
     replay_button = tkinter.Button(root, text="Play again", width=10, height=1, bg="red", activebackground="#cf0000",
                                    font=("bold", 20),
-                                   command=lambda: replay(gameover_lb, score_lb, replay_button, quit_button),
+                                   command=lambda: replay([game_over_lb, score_lb, replay_button, quit_button]),
                                    bd=3)
     replay_button.place(x=220, y=300)
 
@@ -112,6 +126,37 @@ def check_collision():
     return collision.has_collided
 
 
+def update_player_scores():
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    scores = stub.GetCurrentPlayerScores(snake_pb2.GetRequest())
+
+    assert isinstance(score_window, tkinter.Listbox)
+    score_window.delete(1, 'end')
+
+    for i, score in enumerate(scores.scores):
+        score_window.insert(i + 1, f' {i + 1}. {score.name}: {score.score} points')
+        score_window.itemconfig(i + 1, foreground=score.color)
+
+
+def draw_foods():
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    assert isinstance(game_canvas, tkinter.Canvas)
+
+    game_canvas.delete('food')
+
+    foods = stub.GetFood(snake.body[0])
+    for f in foods:
+        food = game_canvas.create_oval(
+            (f.x + .75) * GAME_CONFIGURATION.snake_size,
+            (f.y + .75) * GAME_CONFIGURATION.snake_size,
+            (f.x + .25) * GAME_CONFIGURATION.snake_size,
+            (f.y + .25) * GAME_CONFIGURATION.snake_size,
+            fill='white',
+            tag='food'
+        )
+        game_canvas.tag_lower(food)
+
+
 def game_flow():
     global GAME_CONFIGURATION
     global stub
@@ -120,7 +165,8 @@ def game_flow():
     if check_collision():
         return
     draw_all_snakes()
-
+    draw_foods()
+    update_player_scores()
     assert isinstance(game_canvas, tkinter.Canvas)
     game_canvas.after(GAME_CONFIGURATION.game_speed, game_flow)
 
@@ -143,6 +189,13 @@ def change_snake_direction(event):
         direction = new_direction
 
 
+def random_food():
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    while True:
+        stub.AddMoreFood(snake_pb2.GetRequest())
+        time.sleep(random.randint(1, 2))
+
+
 def start_game():
     global game_canvas
     global score_window
@@ -159,6 +212,8 @@ def start_game():
         font="Helvetica",
     )
     score_window.place(x=GAME_CONFIGURATION.window_width, y=0)
+    score_window.insert(0, " Scores:")
+    score_window.itemconfig(0, foreground='white')
 
     game_canvas = tkinter.Canvas(
         width=GAME_CONFIGURATION.window_width,
@@ -174,7 +229,8 @@ def start_game():
         fill='', outline=GAME_CONFIGURATION.border_color, width=2 * GAME_CONFIGURATION.snake_size)
     game_canvas.grid(row=0, column=0)
     game_canvas.bind_all('<Key>', change_snake_direction)
-
+    random_food_thread = threading.Thread(target=random_food, daemon=True)
+    random_food_thread.start()
     game_flow()
 
 

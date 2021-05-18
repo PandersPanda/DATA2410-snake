@@ -36,7 +36,7 @@ class SnakeServiceStub(object):
                 )
         self.GetFood = channel.unary_stream(
                 '/SnakeService/GetFood',
-                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                request_serializer=snake__pb2.Point.SerializeToString,
                 response_deserializer=snake__pb2.Point.FromString,
                 )
         self.AddMoreFood = channel.unary_unary(
@@ -53,6 +53,11 @@ class SnakeServiceStub(object):
                 '/SnakeService/KillSnake',
                 request_serializer=snake__pb2.KillSnakeRequest.SerializeToString,
                 response_deserializer=snake__pb2.Snake.FromString,
+                )
+        self.GetCurrentPlayerScores = channel.unary_unary(
+                '/SnakeService/GetCurrentPlayerScores',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.ScoreResponse.FromString,
                 )
 
 
@@ -107,6 +112,12 @@ class SnakeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetCurrentPlayerScores(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SnakeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -132,7 +143,7 @@ def add_SnakeServiceServicer_to_server(servicer, server):
             ),
             'GetFood': grpc.unary_stream_rpc_method_handler(
                     servicer.GetFood,
-                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    request_deserializer=snake__pb2.Point.FromString,
                     response_serializer=snake__pb2.Point.SerializeToString,
             ),
             'AddMoreFood': grpc.unary_unary_rpc_method_handler(
@@ -149,6 +160,11 @@ def add_SnakeServiceServicer_to_server(servicer, server):
                     servicer.KillSnake,
                     request_deserializer=snake__pb2.KillSnakeRequest.FromString,
                     response_serializer=snake__pb2.Snake.SerializeToString,
+            ),
+            'GetCurrentPlayerScores': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCurrentPlayerScores,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    response_serializer=snake__pb2.ScoreResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -240,7 +256,7 @@ class SnakeService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/SnakeService/GetFood',
-            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.Point.SerializeToString,
             snake__pb2.Point.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -293,5 +309,22 @@ class SnakeService(object):
         return grpc.experimental.unary_unary(request, target, '/SnakeService/KillSnake',
             snake__pb2.KillSnakeRequest.SerializeToString,
             snake__pb2.Snake.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetCurrentPlayerScores(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/GetCurrentPlayerScores',
+            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.ScoreResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

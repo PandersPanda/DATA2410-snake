@@ -1,5 +1,5 @@
 import snake_pb2_grpc
-from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionResponse
+from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionResponse, Score, ScoreResponse
 import grpc
 from concurrent import futures
 import random
@@ -29,8 +29,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
     def GetGameConfigurations(self, request, context):
         window_width = 600
         window_height = 600
-        board_width = 2 * window_width
-        board_height = 2 * window_height
+        board_width = 4 * window_width
+        board_height = 4 * window_height
         snake_size = 20
         game_speed = 50
         max_x = board_width // snake_size
@@ -111,7 +111,13 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         new_head.x += self.DIRECTIONS[direction].x
         new_head.y += self.DIRECTIONS[direction].y
 
-        snake.body.pop()
+        if new_head in self.FOODS:
+            self.FOODS.remove(new_head)
+            if len(self.FOODS) == 0:
+                self.add_food()
+        else:
+            snake.body.pop()
+
         snake.body.insert(0, new_head)
         snake.direction = direction
         return snake
@@ -148,10 +154,28 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
         return CollisionResponse(has_collided=False)
 
+    def GetFood(self, request, context):
+        x, y = request.x, request.y
+        if len(self.FOODS) == 0:
+            self.add_food()
+        for food in self.FOODS:
+            if abs(food.x - x) < 30 and abs(food.y - y) < 30:
+                yield food
+
+    def AddMoreFood(self, request, context):
+        return self.add_food()
+
     def KillSnake(self, request, context):
         snake = self.SNAKES.get(request.name, None)
         self.turn_snake_to_food(snake)
         return snake
+
+    def GetCurrentPlayerScores(self, request, context):
+        scores = []
+        for s in self.SNAKES.values():
+            scores.append(Score(name=s.name, color=s.color, score=len(s.body) - 3))
+        scores.sort(key=lambda x: x.score, reverse=True)  # Sort list in descending order
+        return ScoreResponse(scores=scores)
 
     def turn_snake_to_food(self, snake):
         self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
@@ -174,6 +198,7 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
             )
 
         self.FOODS.append(p)
+        return p
 
     def update_highscore(self, snake):
         cnxn = mysql.connector.connect(**self.config)
