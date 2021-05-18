@@ -1,7 +1,5 @@
 syntax='proto3';
 
-
-//Defining a message to store all the configurations to be required for the game.
 message GameConfig {
   int32 window_width = 1;
   int32 window_height = 2;
@@ -19,7 +17,6 @@ message GameConfig {
   string border_color = 14;
 }
 
-//Use this message for empty requests
 message GetRequest {}
 
 message JoinRequest {
@@ -80,4 +77,5 @@ service SnakeService {
   rpc CheckCollision(CollisionRequest) returns (CollisionResponse);
   rpc KillSnake(KillSnakeRequest) returns (Snake);
   rpc GetCurrentPlayerScores(GetRequest) returns (ScoreResponse);
+  rpc GetHighScores(GetRequest) returns (ScoreResponse);
 }

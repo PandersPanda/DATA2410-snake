@@ -20,11 +20,55 @@ direction = None
 
 
 def show_high_scores():
-    pass
+    high_score_window = tkinter.Tk()
+    high_score_window.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
+    high_score_window.resizable(False, False)
+    high_score_window.title("Snake Game: Highscores")
+
+    back_button = tkinter.Button(high_score_window, width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=high_score_window.destroy, text="Back", bd=3)
+
+    back_button.place(x=450, y=0)
+
+    high_score_list = tkinter.Listbox(score_window, height=15, width=25,
+                                      font="bold")
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    high_scores = stub.GetHighScores(snake_pb2.GetRequest())
+    for i, score in enumerate(high_scores.scores):
+        high_score_list.insert(i, f" {i + 1}. {score.name}: {score.score} points")
+
+    high_score_list.place(x=175, y=200)
 
 
 def show_help():
-    pass
+    help_window = tkinter.Tk()
+    help_window.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
+    help_window.resizable(False, False)
+    help_window.title("Snake Game: Help")
+
+    back_button = tkinter.Button(help_window, width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=help_window.destroy, text="Back", bd=3)
+
+    title1 = tkinter.Label(help_window, text=f"Gameplay:", font=("bold", 20))
+
+    information_label = tkinter.Label(help_window, text=f"Snake is a game where you get bigger by eating food,\n"
+                                                        "The goal is to get as big as possible, can you beat the "
+                                                        "highscore?\n "
+                                                        "You will die if you either hit one of the borders or crash "
+                                                        "into\n "
+                                                        "the other snakes", font=12)
+
+    title2 = tkinter.Label(help_window, text=f"Controls:", font=("bold", 20))
+
+    control_label = tkinter.Label(help_window, text=f"You move with your arrow keys or w a s d", font=20)
+
+    back_button.place(x=450, y=0)
+    title1.place(x=0, y=0)
+    information_label.place(x=0, y=80)
+    title2.place(x=0, y=200)
+    control_label.place(x=0, y=250)
 
 
 def scroll_lock_movement():
@@ -143,7 +187,6 @@ def draw_foods():
     assert isinstance(game_canvas, tkinter.Canvas)
 
     game_canvas.delete('food')
-    stub.AddMoreFood(snake_pb2.GetRequest())
     foods = stub.GetFood(snake.body[0])
     for f in foods:
         food = game_canvas.create_oval(
@@ -229,8 +272,8 @@ def start_game():
         fill='', outline=GAME_CONFIGURATION.border_color, width=2 * GAME_CONFIGURATION.snake_size)
     game_canvas.grid(row=0, column=0)
     game_canvas.bind_all('<Key>', change_snake_direction)
-    # random_food_thread = threading.Thread(target=random_food, daemon=True)
-    # random_food_thread.start()
+    random_food_thread = threading.Thread(target=random_food, daemon=True)
+    random_food_thread.start()
     game_flow()
 
 
@@ -265,6 +308,15 @@ def establish_stub():
     global stub
     channel = grpc.insecure_channel(f'{host}:{port}')
     stub = snake_pb2_grpc.SnakeServiceStub(channel)
+
+
+def on_closing():
+    global snake
+    global stub
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    if len(snake.name) != 0:  # Has at least started game
+        stub.KillSnake(snake_pb2.KillSnakeRequest(name=snake.name))
+    root.quit()
 
 
 def main():
@@ -317,6 +369,7 @@ def main():
     help_button.place(x=220, y=380)
     high_score_button.place(x=220, y=460)
 
+    root.protocol("WM_DELETE_WINDOW", on_closing)
     # Run mainloop
     root.mainloop()
 

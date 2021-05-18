@@ -59,6 +59,11 @@ class SnakeServiceStub(object):
                 request_serializer=snake__pb2.GetRequest.SerializeToString,
                 response_deserializer=snake__pb2.ScoreResponse.FromString,
                 )
+        self.GetHighScores = channel.unary_unary(
+                '/SnakeService/GetHighScores',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.ScoreResponse.FromString,
+                )
 
 
 class SnakeServiceServicer(object):
@@ -118,6 +123,12 @@ class SnakeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetHighScores(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SnakeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -163,6 +174,11 @@ def add_SnakeServiceServicer_to_server(servicer, server):
             ),
             'GetCurrentPlayerScores': grpc.unary_unary_rpc_method_handler(
                     servicer.GetCurrentPlayerScores,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    response_serializer=snake__pb2.ScoreResponse.SerializeToString,
+            ),
+            'GetHighScores': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetHighScores,
                     request_deserializer=snake__pb2.GetRequest.FromString,
                     response_serializer=snake__pb2.ScoreResponse.SerializeToString,
             ),
@@ -324,6 +340,23 @@ class SnakeService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/SnakeService/GetCurrentPlayerScores',
+            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.ScoreResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetHighScores(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/GetHighScores',
             snake__pb2.GetRequest.SerializeToString,
             snake__pb2.ScoreResponse.FromString,
             options, channel_credentials,

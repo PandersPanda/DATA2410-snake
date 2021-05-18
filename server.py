@@ -127,8 +127,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         x_scroll = x * self.GAME_CONFIGURATION.scroll_fraction_x - self.GAME_CONFIGURATION.scroll_response_x
         y_scroll = y * self.GAME_CONFIGURATION.scroll_fraction_y - self.GAME_CONFIGURATION.scroll_response_y
 
-        x_vision = 1 if x_scroll > 0 else 0
-        y_vision = 1 if y_scroll > 0 else 0
+        x_vision = 1 if 0 < x_scroll < 0.7 else 0
+        y_vision = 1 if 0 < y_scroll < 0.7 else 0
 
         list_of_points = []
         for snake in self.SNAKES.values():
@@ -163,9 +163,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         x, y = request.x, request.y
         x_scroll = x * self.GAME_CONFIGURATION.scroll_fraction_x - self.GAME_CONFIGURATION.scroll_response_x
         y_scroll = y * self.GAME_CONFIGURATION.scroll_fraction_y - self.GAME_CONFIGURATION.scroll_response_y
-
-        x_vision = 1 if x_scroll > 0 else 0
-        y_vision = 1 if y_scroll > 0 else 0
+        x_vision = 1 if 0 < x_scroll < 0.7 else 0
+        y_vision = 1 if 0 < y_scroll < 0.7 else 0
 
         if len(self.FOODS) == 0:
             self.add_food()
@@ -187,6 +186,22 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
             scores.append(Score(name=s.name, color=s.color, score=len(s.body) - 3))
         scores.sort(key=lambda x: x.score, reverse=True)  # Sort list in descending order
         return ScoreResponse(scores=scores)
+
+    def GetHighScores(self, request, context):
+        cnxn = mysql.connector.connect(**self.config)
+
+        cursor = cnxn.cursor()
+        cursor.execute("USE snake_highscores")
+        cursor.execute("SELECT username, score FROM highscores "
+                       "ORDER BY score DESC")
+        out = cursor.fetchall()
+        high_scores = []
+        for row in out:
+            high_scores.append(Score(name=row[0], score=row[1]))
+
+        cursor.close()
+        cnxn.close()
+        return ScoreResponse(scores=high_scores)
 
     def turn_snake_to_food(self, snake):
         self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
@@ -233,7 +248,7 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         )
         out = cursor.fetchall()
         score = len(snake.body) - 3
-        if len(out) == 1:
+        if len(out) > 0:
             if score > out[0][1]:  # Update highscore if user got a new high score
                 query = "UPDATE highscores SET score=%s WHERE username=%s"
                 data = (score, snake.name)
