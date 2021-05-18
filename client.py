@@ -168,9 +168,11 @@ def spawn_foods():
     canvas.delete('food')
     foods = stub.getFood(snake_pb2.FoodRequest())
     food_list = []
+
     for f in foods:
-        draw_food(food=f, r=0.5, color='White')
-        food_list.append(f)
+        while len(food_list) < 1:
+            draw_food(food=f, r=0.5, color='White')
+            food_list.append(f)
     return food_list
 
 
@@ -203,7 +205,7 @@ def game_flow():
                 currentScore = row[1]
                 if len(snake.body)-3 > currentScore:
                     newHighscore = True
-            break
+                break
 
         config = {
             'user': 'app_user',
