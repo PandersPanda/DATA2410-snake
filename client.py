@@ -9,7 +9,7 @@ import sys
 import mysql.connector
 
 SNAKE_SIZE = 20
-GAME_SPEED = 50
+GAME_SPEED = 200
 
 WINDOW_WIDTH = 620
 WINDOW_HEIGHT = 620

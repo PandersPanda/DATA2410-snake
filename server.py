@@ -134,8 +134,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
             yield food
 
     def addMoreFood(self, request, context):
-        if len(self.FOODS) < 50:
-            self.add_food()
+        self.add_food()
         return request
 
     def add_food(self):
@@ -149,7 +148,8 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
             x, y = random.randint(0, self.MAX_X - 1), random.randint(0, self.MAX_X - 1)
             p = Point(x=x, y=y)
 
-        self.FOODS.append(p)
+        if len(self.FOODS) < 50:
+            self.FOODS.append(p)
 
     def turn_snake_to_food(self, snake):
         self.FOODS.append(random.choice(snake.body))
