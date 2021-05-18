@@ -19,7 +19,6 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         'Up': -1
     }
 
-
     def addSnake(self, request, context):
         #  Possible directions:
         directions = ['Up', 'Down', 'Left', 'Right']
@@ -27,7 +26,7 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
         self.MAX_X = request.maxX
         self.MAX_Y = request.maxY
 
-        x, y = random.randint(10, self.MAX_X-10), random.randint(10, self.MAX_Y-10)
+        x, y = random.randint(10, self.MAX_X - 10), random.randint(10, self.MAX_Y - 10)
         body = [Point(x=x, y=y)]  # Random head
         if random.randint(0, 1):
             r = random.choice([-1, 1])
@@ -163,7 +162,7 @@ def serve():
     with open('server.crt', 'rb') as f:
         certificate_chain = f.read()
     server_credentials = grpc.ssl_server_credentials(
-        ((private_key, certificate_chain), )
+        ((private_key, certificate_chain),)
     )
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
     snake_pb2_grpc.add_SnakeServiceServicer_to_server(
@@ -177,4 +176,3 @@ def serve():
 
 if __name__ == '__main__':
     serve()
-
