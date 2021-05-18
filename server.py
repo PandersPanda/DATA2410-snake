@@ -3,12 +3,13 @@ from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionResponse,
 import grpc
 from concurrent import futures
 import random
+import json
 import mysql.connector
 
 
 class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
     GAME_CONFIGURATION = GameConfig()
-    AVAILABLE_COLORS = ['Purple', 'Maroon1', 'Cyan2', 'Orange', 'Green', 'Yellow', 'Blue', 'Red']
+    AVAILABLE_COLORS = []
     SNAKES = {}
     DIRECTIONS = {
         'Right': Point(x=1, y=0),
@@ -41,6 +42,9 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         scroll_fraction_y = 1 / max_y
         background_color = 'grey6'
         border_color = 'red4'
+
+        with open('tkinter-colors.json', 'r') as f:
+            self.AVAILABLE_COLORS.extend(json.load(f))
 
         self.GAME_CONFIGURATION.window_width = window_width
         self.GAME_CONFIGURATION.window_height = window_height
@@ -90,9 +94,12 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
             y += random.choice([-1, 1])
         body.append(Point(x=x, y=y))
 
+        color = random.choice(self.AVAILABLE_COLORS)
+        self.AVAILABLE_COLORS.remove(color)
+
         snake = Snake(
             name=request.name,
-            color=self.AVAILABLE_COLORS.pop(),
+            color=color,
             direction=random.choice(directions),
             body=body
         )
@@ -136,7 +143,7 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
             list_of_points.extend(snake_segment)
 
         for segment in list_of_points:
-            if abs(segment.point.x - x) < 30 - 14*x_vision and abs(segment.point.y - y) < 30 - 14*y_vision:
+            if abs(segment.point.x - x) < 30 - 14 * x_vision and abs(segment.point.y - y) < 30 - 14 * y_vision:
                 yield segment
 
     def CheckCollision(self, request, context):
@@ -169,7 +176,7 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         if len(self.FOODS) == 0:
             self.add_food()
         for food in self.FOODS:
-            if abs(food.x - x) < 30 - 14*x_vision and abs(food.y - y) < 30 - 14*y_vision:
+            if abs(food.x - x) < 30 - 14 * x_vision and abs(food.y - y) < 30 - 14 * y_vision:
                 yield food
 
     def AddMoreFood(self, request, context):

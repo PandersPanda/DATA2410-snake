@@ -31,7 +31,7 @@ def show_high_scores():
 
     back_button.place(x=450, y=0)
 
-    high_score_list = tkinter.Listbox(score_window, height=15, width=25,
+    high_score_list = tkinter.Listbox(high_score_window, height=15, width=25,
                                       font="bold")
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
     high_scores = stub.GetHighScores(snake_pb2.GetRequest())
@@ -314,8 +314,10 @@ def on_closing():
     global snake
     global stub
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
-    if len(snake.name) != 0:  # Has at least started game
+    try:
         stub.KillSnake(snake_pb2.KillSnakeRequest(name=snake.name))
+    except grpc.RpcError:
+        pass
     root.quit()
 
 
@@ -336,13 +338,13 @@ def main():
 
     # Index page:
     username_var = tkinter.StringVar()
-    bg = tkinter.PhotoImage(file="bg.png")
+    bg = tkinter.PhotoImage(file="snake.png")
     label1 = tkinter.Label(root, image=bg)
-    label1.place(x=0, y=0)
+    label1.place(x=0, y=100)
 
     username_var = tkinter.StringVar()
 
-    title_label = tkinter.Label(root, text='Username:', font=("bold", 20), bg="#54b9f0")
+    title_label = tkinter.Label(root, text='Username:', font=("bold", 20))
     message_label = tkinter.Label(text='', font=("cursive", 11))
     user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
     submit_button = tkinter.Button(
