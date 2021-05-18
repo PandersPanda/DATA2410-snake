@@ -53,7 +53,7 @@ bg = tkinter.PhotoImage(file="bg.png")
 label1 = tkinter.Label(root, image=bg)
 label1.place(x=0, y=0)
 
-score_canvas = tkinter.Canvas(width=WINDOW_WIDTH+150, height=20)
+score_canvas = tkinter.Canvas(width=WINDOW_WIDTH + 150, height=20)
 
 canvas = tkinter.Canvas(width=WINDOW_WIDTH, height=WINDOW_HEIGHT - 20,
                         highlightthickness=0, background=BACKGROUND_COLOR)
@@ -63,7 +63,7 @@ canvas.create_rectangle(0, 0, GAME_WIDTH + 1.5, GAME_HEIGHT + 1.5,
                         fill='', outline=BORDER_COLOR, width=2 * SNAKE_SIZE)
 
 score_window = tkinter.Listbox(width=150, height=WINDOW_HEIGHT, background="white",
-                               font=("Helvetica",10))
+                               font=("Helvetica", 10))
 
 
 def showHighscore():
@@ -202,7 +202,7 @@ def game_flow():
             if snake.username in row:
                 exists = True
                 currentScore = row[1]
-                if len(snake.body)-3 > currentScore:
+                if len(snake.body) - 3 > currentScore:
                     newHighscore = True
                 break
 
@@ -225,7 +225,7 @@ def game_flow():
 
         if exists and newHighscore:
             query = "UPDATE highscores SET score=%s WHERE username=%s"
-            data = (len(snake.body)-3, snake.username)
+            data = (len(snake.body) - 3, snake.username)
             cursor.execute(query, data)
             cnx.commit()
 
@@ -254,10 +254,11 @@ def game_flow():
     spawn_foods()
     canvas.after(GAME_SPEED, game_flow)
 
+
 def update_players():
     snakes = stub.getSnakes(snake_pb2.GetRequest())
-    n=2
-    score_window.delete(1,'end')
+    n = 2
+    score_window.delete(1, 'end')
     for s in snakes:
         score_window.insert(n, s.username)
         n += 1
@@ -267,7 +268,7 @@ def start_game(event=None):
     message_label.destroy()
     score_canvas.pack()
     help_button.destroy()
-    root.geometry(f'{WINDOW_WIDTH+150}x{WINDOW_HEIGHT}')
+    root.geometry(f'{WINDOW_WIDTH + 150}x{WINDOW_HEIGHT}')
 
     canvas.pack(side=tkinter.LEFT)
     score_canvas.create_text(
