@@ -314,12 +314,15 @@ def game_over():
 def replay(gameover, score, button, button2):
     global snake
     global direction
+    global username
     button.destroy()
     gameover.destroy()
     score.destroy()
     button2.destroy()
     snake = stub.addSnake(snake_pb2.JoinRequest(maxX=GRID_ELEMENT_X, maxY=GRID_ELEMENT_Y))
     direction = snake.direction
+    snake = stub.addUsername(snake_pb2.UsernameRequest(username=username, color=snake.color))
+
     start_game()
 
 
