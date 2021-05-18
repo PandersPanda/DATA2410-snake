@@ -14,8 +14,8 @@ GAME_SPEED = 50
 WINDOW_WIDTH = 620
 WINDOW_HEIGHT = 620
 
-GAME_WIDTH = 2 * WINDOW_WIDTH
-GAME_HEIGHT = 2 * WINDOW_WIDTH
+GAME_WIDTH = 4 * WINDOW_WIDTH
+GAME_HEIGHT = 4 * WINDOW_WIDTH
 
 GRID_ELEMENT_X = GAME_WIDTH // SNAKE_SIZE
 GRID_ELEMENT_Y = GAME_HEIGHT // SNAKE_SIZE
@@ -129,6 +129,9 @@ def move_snake():
     canvas.xview_moveto(x_lock * SCROLL_FRACTION_X - SCROLL_RESPONSE_X)
     canvas.yview_moveto(y_lock * SCROLL_FRACTION_Y - SCROLL_RESPONSE_Y)
 
+    print(f"x: {x_lock * SCROLL_FRACTION_X - SCROLL_RESPONSE_X}")
+    print(f"y: {y_lock * SCROLL_FRACTION_Y - SCROLL_RESPONSE_Y}")
+
 
 def change_direction(event):
     global direction
@@ -166,6 +169,7 @@ def draw_all_snakes():
 
 def spawn_foods():
     canvas.delete('food')
+    stub.addMoreFood(snake_pb2.FoodRequest())
     foods = stub.getFood(snake_pb2.FoodRequest())
     food_list = []
 
@@ -285,8 +289,8 @@ def start_game(event=None):
     )
     score_window.place(x=WINDOW_WIDTH, y=0)
     score_window.insert(1, "Players connected")
-    random_food_thread = threading.Thread(target=random_food, daemon=True)
-    random_food_thread.start()
+    # random_food_thread = threading.Thread(target=random_food, daemon=True)
+    # random_food_thread.start()
     canvas.bind_all('<Key>', change_direction)
     game_flow()
 

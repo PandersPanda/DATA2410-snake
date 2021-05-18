@@ -143,12 +143,11 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
             snakes.extend(snake.body)
 
         p = Point(x=x, y=y)
-        while p in snakes:
+        while p in snakes or p in self.FOODS:
             x, y = random.randint(0, self.MAX_X - 1), random.randint(0, self.MAX_X - 1)
             p = Point(x=x, y=y)
 
-        if len(self.FOODS) < 50:
-            self.FOODS.append(p)
+        self.FOODS.append(p)
 
     def turn_snake_to_food(self, snake):
         self.FOODS.append(random.choice(snake.body))
