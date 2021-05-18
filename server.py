@@ -124,6 +124,11 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
     def GetAllSnakes(self, request, context):
         x, y = request.x, request.y
+        x_scroll = x * self.GAME_CONFIGURATION.scroll_fraction_x - self.GAME_CONFIGURATION.scroll_response_x
+        y_scroll = y * self.GAME_CONFIGURATION.scroll_fraction_y - self.GAME_CONFIGURATION.scroll_response_y
+
+        x_vision = 1 if x_scroll > 0 else 0
+        y_vision = 1 if y_scroll > 0 else 0
 
         list_of_points = []
         for snake in self.SNAKES.values():
@@ -131,7 +136,7 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
             list_of_points.extend(snake_segment)
 
         for segment in list_of_points:
-            if abs(segment.point.x - x) < 30 and abs(segment.point.y - y) < 30:
+            if abs(segment.point.x - x) < 30 - 14*x_vision and abs(segment.point.y - y) < 30 - 14*y_vision:
                 yield segment
 
     def CheckCollision(self, request, context):
@@ -156,10 +161,16 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
     def GetFood(self, request, context):
         x, y = request.x, request.y
+        x_scroll = x * self.GAME_CONFIGURATION.scroll_fraction_x - self.GAME_CONFIGURATION.scroll_response_x
+        y_scroll = y * self.GAME_CONFIGURATION.scroll_fraction_y - self.GAME_CONFIGURATION.scroll_response_y
+
+        x_vision = 1 if x_scroll > 0 else 0
+        y_vision = 1 if y_scroll > 0 else 0
+
         if len(self.FOODS) == 0:
             self.add_food()
         for food in self.FOODS:
-            if abs(food.x - x) < 30 and abs(food.y - y) < 30:
+            if abs(food.x - x) < 30 - 14*x_vision and abs(food.y - y) < 30 - 14*y_vision:
                 yield food
 
     def AddMoreFood(self, request, context):

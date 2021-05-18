@@ -143,7 +143,7 @@ def draw_foods():
     assert isinstance(game_canvas, tkinter.Canvas)
 
     game_canvas.delete('food')
-
+    stub.AddMoreFood(snake_pb2.GetRequest())
     foods = stub.GetFood(snake.body[0])
     for f in foods:
         food = game_canvas.create_oval(
@@ -229,8 +229,8 @@ def start_game():
         fill='', outline=GAME_CONFIGURATION.border_color, width=2 * GAME_CONFIGURATION.snake_size)
     game_canvas.grid(row=0, column=0)
     game_canvas.bind_all('<Key>', change_snake_direction)
-    random_food_thread = threading.Thread(target=random_food, daemon=True)
-    random_food_thread.start()
+    # random_food_thread = threading.Thread(target=random_food, daemon=True)
+    # random_food_thread.start()
     game_flow()
 
 
