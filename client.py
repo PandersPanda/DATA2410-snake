@@ -74,6 +74,8 @@ def draw_all_snakes():
 
 
 def game_over():
+    root.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
+
     assert isinstance(game_canvas, tkinter.Canvas)
     game_canvas.grid_forget()
 

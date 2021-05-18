@@ -182,7 +182,6 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
     def KillSnake(self, request, context):
         snake = self.SNAKES.get(request.name, None)
-        print(snake)
         self.turn_snake_to_food(snake)
         return snake
 
