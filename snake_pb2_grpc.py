@@ -49,6 +49,11 @@ class SnakeServiceStub(object):
                 request_serializer=snake__pb2.CollisionRequest.SerializeToString,
                 response_deserializer=snake__pb2.CollisionResponse.FromString,
                 )
+        self.KillSnake = channel.unary_unary(
+                '/SnakeService/KillSnake',
+                request_serializer=snake__pb2.KillSnakeRequest.SerializeToString,
+                response_deserializer=snake__pb2.Snake.FromString,
+                )
 
 
 class SnakeServiceServicer(object):
@@ -96,6 +101,12 @@ class SnakeServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def KillSnake(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SnakeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -133,6 +144,11 @@ def add_SnakeServiceServicer_to_server(servicer, server):
                     servicer.CheckCollision,
                     request_deserializer=snake__pb2.CollisionRequest.FromString,
                     response_serializer=snake__pb2.CollisionResponse.SerializeToString,
+            ),
+            'KillSnake': grpc.unary_unary_rpc_method_handler(
+                    servicer.KillSnake,
+                    request_deserializer=snake__pb2.KillSnakeRequest.FromString,
+                    response_serializer=snake__pb2.Snake.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -260,5 +276,22 @@ class SnakeService(object):
         return grpc.experimental.unary_unary(request, target, '/SnakeService/CheckCollision',
             snake__pb2.CollisionRequest.SerializeToString,
             snake__pb2.CollisionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def KillSnake(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/KillSnake',
+            snake__pb2.KillSnakeRequest.SerializeToString,
+            snake__pb2.Snake.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

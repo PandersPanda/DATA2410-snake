@@ -73,11 +73,50 @@ def draw_all_snakes():
         draw_segment(s)
 
 
+def game_over():
+    assert isinstance(game_canvas, tkinter.Canvas)
+    game_canvas.grid_forget()
+
+    game_over_lb = tkinter.Label(root, text="Game Over", font=("Bold", 35))
+    game_over_lb.place(x=200, y=200)
+
+    score_lb = tkinter.Label(root, text=f"Your score was {len(snake.body) - 3}")
+    score_lb.place(x=200, y=260)
+
+    replay_button = tkinter.Button(root, text="Play again", width=10, height=1, bg="red", activebackground="#cf0000",
+                                   font=("bold", 20),
+                                   command=lambda: replay(gameover_lb, score_lb, replay_button, quit_button),
+                                   bd=3)
+    replay_button.place(x=220, y=300)
+
+    quit_button = tkinter.Button(root, text="Quit", width=10, height=1, bg="red", activebackground="#cf0000",
+                                 font=("bold", 20),
+                                 command=root.quit,
+                                 bd=3)
+    quit_button.place(x=220, y=370)
+
+
+def check_collision():
+    global snake
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    collision = stub.CheckCollision(
+        snake_pb2.CollisionRequest(name=snake.name)
+    )
+    if collision.has_collided:
+        stub.KillSnake(snake_pb2.KillSnakeRequest(name=snake.name))
+        print(f"You died, final score for: {len(snake.body) - 3}")
+        game_over()
+
+    return collision.has_collided
+
+
 def game_flow():
     global GAME_CONFIGURATION
     global stub
 
     move_snake()
+    if check_collision():
+        return
     draw_all_snakes()
 
     assert isinstance(game_canvas, tkinter.Canvas)

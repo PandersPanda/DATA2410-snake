@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bsnake.proto\"\xc6\x02\n\nGameConfig\x12\x14\n\x0cwindow_width\x18\x01 \x01(\x05\x12\x15\n\rwindow_height\x18\x02 \x01(\x05\x12\x13\n\x0b\x62oard_width\x18\x03 \x01(\x05\x12\x14\n\x0c\x62oard_height\x18\x04 \x01(\x05\x12\x12\n\nsnake_size\x18\x05 \x01(\x05\x12\x12\n\ngame_speed\x18\x06 \x01(\x05\x12\r\n\x05max_x\x18\x07 \x01(\x05\x12\r\n\x05max_y\x18\x08 \x01(\x05\x12\x19\n\x11scroll_response_x\x18\t \x01(\x02\x12\x19\n\x11scroll_response_y\x18\n \x01(\x02\x12\x19\n\x11scroll_fraction_x\x18\x0b \x01(\x02\x12\x19\n\x11scroll_fraction_y\x18\x0c \x01(\x02\x12\x18\n\x10\x62\x61\x63kground_color\x18\r \x01(\t\x12\x14\n\x0c\x62order_color\x18\x0e \x01(\t\"\x0c\n\nGetRequest\"\x1b\n\x0bJoinRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"M\n\x05Snake\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63olor\x18\x02 \x01(\t\x12\x11\n\tdirection\x18\x03 \x01(\t\x12\x14\n\x04\x62ody\x18\x04 \x03(\x0b\x32\x06.Point\".\n\x0bMoveRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"4\n\x0cSnakeSegment\x12\x15\n\x05point\x18\x01 \x01(\x0b\x32\x06.Point\x12\r\n\x05\x63olor\x18\x02 \x01(\t\" \n\x10\x43ollisionRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"%\n\x11\x43ollisionResponse\x12\x10\n\x08\x63ollided\x18\x01 \x01(\x08\x32\xae\x02\n\x0cSnakeService\x12\x31\n\x15GetGameConfigurations\x12\x0b.GetRequest\x1a\x0b.GameConfig\x12 \n\x08JoinGame\x12\x0c.JoinRequest\x1a\x06.Snake\x12!\n\tMoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\x12\'\n\x0cGetAllSnakes\x12\x06.Point\x1a\r.SnakeSegment0\x01\x12 \n\x07GetFood\x12\x0b.GetRequest\x1a\x06.Point0\x01\x12\"\n\x0b\x41\x64\x64MoreFood\x12\x0b.GetRequest\x1a\x06.Point\x12\x37\n\x0e\x43heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponseb\x06proto3'
+  serialized_pb=b'\n\x0bsnake.proto\"\xc6\x02\n\nGameConfig\x12\x14\n\x0cwindow_width\x18\x01 \x01(\x05\x12\x15\n\rwindow_height\x18\x02 \x01(\x05\x12\x13\n\x0b\x62oard_width\x18\x03 \x01(\x05\x12\x14\n\x0c\x62oard_height\x18\x04 \x01(\x05\x12\x12\n\nsnake_size\x18\x05 \x01(\x05\x12\x12\n\ngame_speed\x18\x06 \x01(\x05\x12\r\n\x05max_x\x18\x07 \x01(\x05\x12\r\n\x05max_y\x18\x08 \x01(\x05\x12\x19\n\x11scroll_response_x\x18\t \x01(\x02\x12\x19\n\x11scroll_response_y\x18\n \x01(\x02\x12\x19\n\x11scroll_fraction_x\x18\x0b \x01(\x02\x12\x19\n\x11scroll_fraction_y\x18\x0c \x01(\x02\x12\x18\n\x10\x62\x61\x63kground_color\x18\r \x01(\t\x12\x14\n\x0c\x62order_color\x18\x0e \x01(\t\"\x0c\n\nGetRequest\"\x1b\n\x0bJoinRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"M\n\x05Snake\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63olor\x18\x02 \x01(\t\x12\x11\n\tdirection\x18\x03 \x01(\t\x12\x14\n\x04\x62ody\x18\x04 \x03(\x0b\x32\x06.Point\".\n\x0bMoveRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x11\n\tdirection\x18\x02 \x01(\t\"4\n\x0cSnakeSegment\x12\x15\n\x05point\x18\x01 \x01(\x0b\x32\x06.Point\x12\r\n\x05\x63olor\x18\x02 \x01(\t\" \n\x10\x43ollisionRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\")\n\x11\x43ollisionResponse\x12\x14\n\x0chas_collided\x18\x01 \x01(\x08\" \n\x10KillSnakeRequest\x12\x0c\n\x04name\x18\x01 \x01(\t2\xd6\x02\n\x0cSnakeService\x12\x31\n\x15GetGameConfigurations\x12\x0b.GetRequest\x1a\x0b.GameConfig\x12 \n\x08JoinGame\x12\x0c.JoinRequest\x1a\x06.Snake\x12!\n\tMoveSnake\x12\x0c.MoveRequest\x1a\x06.Snake\x12\'\n\x0cGetAllSnakes\x12\x06.Point\x1a\r.SnakeSegment0\x01\x12 \n\x07GetFood\x12\x0b.GetRequest\x1a\x06.Point0\x01\x12\"\n\x0b\x41\x64\x64MoreFood\x12\x0b.GetRequest\x1a\x06.Point\x12\x37\n\x0e\x43heckCollision\x12\x11.CollisionRequest\x1a\x12.CollisionResponse\x12&\n\tKillSnake\x12\x11.KillSnakeRequest\x1a\x06.Snakeb\x06proto3'
 )
 
 
@@ -416,7 +416,7 @@ _COLLISIONRESPONSE = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='collided', full_name='CollisionResponse.collided', index=0,
+      name='has_collided', full_name='CollisionResponse.has_collided', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -435,7 +435,39 @@ _COLLISIONRESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=633,
-  serialized_end=670,
+  serialized_end=674,
+)
+
+
+_KILLSNAKEREQUEST = _descriptor.Descriptor(
+  name='KillSnakeRequest',
+  full_name='KillSnakeRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='KillSnakeRequest.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=676,
+  serialized_end=708,
 )
 
 _SNAKE.fields_by_name['body'].message_type = _POINT
@@ -449,6 +481,7 @@ DESCRIPTOR.message_types_by_name['MoveRequest'] = _MOVEREQUEST
 DESCRIPTOR.message_types_by_name['SnakeSegment'] = _SNAKESEGMENT
 DESCRIPTOR.message_types_by_name['CollisionRequest'] = _COLLISIONREQUEST
 DESCRIPTOR.message_types_by_name['CollisionResponse'] = _COLLISIONRESPONSE
+DESCRIPTOR.message_types_by_name['KillSnakeRequest'] = _KILLSNAKEREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 GameConfig = _reflection.GeneratedProtocolMessageType('GameConfig', (_message.Message,), {
@@ -514,6 +547,13 @@ CollisionResponse = _reflection.GeneratedProtocolMessageType('CollisionResponse'
   })
 _sym_db.RegisterMessage(CollisionResponse)
 
+KillSnakeRequest = _reflection.GeneratedProtocolMessageType('KillSnakeRequest', (_message.Message,), {
+  'DESCRIPTOR' : _KILLSNAKEREQUEST,
+  '__module__' : 'snake_pb2'
+  # @@protoc_insertion_point(class_scope:KillSnakeRequest)
+  })
+_sym_db.RegisterMessage(KillSnakeRequest)
+
 
 
 _SNAKESERVICE = _descriptor.ServiceDescriptor(
@@ -523,8 +563,8 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=673,
-  serialized_end=975,
+  serialized_start=711,
+  serialized_end=1053,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetGameConfigurations',
@@ -593,6 +633,16 @@ _SNAKESERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_COLLISIONREQUEST,
     output_type=_COLLISIONRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='KillSnake',
+    full_name='SnakeService.KillSnake',
+    index=7,
+    containing_service=None,
+    input_type=_KILLSNAKEREQUEST,
+    output_type=_SNAKE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

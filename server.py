@@ -1,8 +1,9 @@
 import snake_pb2_grpc
-from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionRequest, CollisionResponse
+from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionResponse
 import grpc
 from concurrent import futures
 import random
+import mysql.connector
 
 
 class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
@@ -17,6 +18,15 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
     }
     OPPOSITE_DIRECTIONS = [{'Up', 'Down'}, {'Left', 'Right'}]
     FOODS = []
+
+    # HS database:
+    config = {
+        'user': 'app_user',
+        'password': 'k2znHSJnNlmi5znh',
+        'host': '35.228.86.138',
+    }
+    cnxn = mysql.connector.connect(**config)
+    cursor = cnxn.cursor()
 
     def GetGameConfigurations(self, request, context):
         window_width = 600
@@ -128,23 +138,30 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         if Point(x=head_x, y=head_y) in snake.body[1:] or \
                 head_x in (0, self.GAME_CONFIGURATION.max_x - 1) or \
                 head_y in (0, self.GAME_CONFIGURATION.max_y - 1):
-            self.turn_snake_to_food(snake)
             return CollisionResponse(has_collided=True)  # return True
 
         other_snakes = self.SNAKES.copy()
-        other_snakes.pop(request.color)
+        other_snakes.pop(request.name)
 
         # Check for other snakes
         for s in other_snakes.values():
             if Point(x=head_x, y=head_y) in s.body:
-                self.turn_snake_to_food(snake)
                 return CollisionResponse(has_collided=True)
 
         return CollisionResponse(has_collided=False)
 
     def turn_snake_to_food(self, snake):
-        self.FOODS.append(random.sample(snake.body, len(snake.body) // 3))
-        self.SNAKES.pop(snake.name, None)
+        self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
+        snake = self.SNAKES.pop(snake.name, None)
+        self.cursor.execute("USE snake_highscores")
+        data = (snake.name, len(snake.body) - 3)
+        insert_command = ("INSERT INTO highscores(username, score) "
+                          "VALUES (%s, %s)")
+        self.cursor.execute(insert_command, data)
+
+        self.cnxn.commit()
+        self.cursor.close()
+        self.cnxn.close()
         self.AVAILABLE_COLORS.append(snake.color)
 
     def add_food(self):
@@ -163,7 +180,11 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
         self.FOODS.append(p)
 
-
+    def KillSnake(self, request, context):
+        snake = self.SNAKES.get(request.name, None)
+        print(snake)
+        self.turn_snake_to_food(snake)
+        return snake
 
 
 def serve():
