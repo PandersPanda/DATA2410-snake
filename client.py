@@ -9,7 +9,7 @@ import sys
 import mysql.connector
 
 SNAKE_SIZE = 20
-GAME_SPEED = 200
+GAME_SPEED = 50
 
 WINDOW_WIDTH = 620
 WINDOW_HEIGHT = 620
@@ -170,9 +170,8 @@ def spawn_foods():
     food_list = []
 
     for f in foods:
-        while len(food_list) < 1:
-            draw_food(food=f, r=0.5, color='White')
-            food_list.append(f)
+        draw_food(food=f, r=0.5, color='White')
+        food_list.append(f)
     return food_list
 
 
