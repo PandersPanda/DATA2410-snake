@@ -1,32 +1,75 @@
-import grpc
 import snake_pb2_grpc
-import snake_pb2
-from snake_pb2 import Snake, Point
+from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionResponse, Score, ScoreResponse
+import grpc
 from concurrent import futures
 import random
+import json
+import mysql.connector
 
 
-class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
-    MAX_X = 31
-    MAX_Y = 31
+class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
+    GAME_CONFIGURATION = GameConfig()
+    AVAILABLE_COLORS = []
     SNAKES = {}
-    FOODS = []
-    AVAILABLE_COLORS = ['Purple', 'Maroon1', 'Cyan2', 'Orange', 'Green', 'Yellow', 'Blue', 'Red']
     DIRECTIONS = {
-        'Right': 1,
-        'Left': -1,
-        'Down': 1,
-        'Up': -1
+        'Right': Point(x=1, y=0),
+        'Down': Point(x=0, y=1),
+        'Left': Point(x=-1, y=0),
+        'Up': Point(x=0, y=-1)
+    }
+    OPPOSITE_DIRECTIONS = [{'Up', 'Down'}, {'Left', 'Right'}]
+    FOODS = []
+
+    # HS database:
+    config = {
+        'user': 'app_user',
+        'password': 'k2znHSJnNlmi5znh',
+        'host': '35.228.86.138',
     }
 
-    def addSnake(self, request, context):
+    def GetGameConfigurations(self, request, context):
+        window_width = 600
+        window_height = 600
+        board_width = 4 * window_width
+        board_height = 4 * window_height
+        snake_size = 20
+        game_speed = 50
+        max_x = board_width // snake_size
+        max_y = board_height // snake_size
+        scroll_response_x = 1 / (2 * board_width / window_width)
+        scroll_response_y = 1 / (2 * board_height / window_height)
+        scroll_fraction_x = 1 / max_x
+        scroll_fraction_y = 1 / max_y
+        background_color = 'grey6'
+        border_color = 'red4'
+
+        with open('tkinter-colors.json', 'r') as f:
+            self.AVAILABLE_COLORS.extend(json.load(f))
+
+        self.GAME_CONFIGURATION.window_width = window_width
+        self.GAME_CONFIGURATION.window_height = window_height
+        self.GAME_CONFIGURATION.board_width = board_width
+        self.GAME_CONFIGURATION.board_height = board_height
+        self.GAME_CONFIGURATION.snake_size = snake_size
+        self.GAME_CONFIGURATION.game_speed = game_speed
+        self.GAME_CONFIGURATION.max_x = max_x
+        self.GAME_CONFIGURATION.max_y = max_y
+        self.GAME_CONFIGURATION.scroll_response_x = scroll_response_x
+        self.GAME_CONFIGURATION.scroll_response_y = scroll_response_y
+        self.GAME_CONFIGURATION.scroll_fraction_x = scroll_fraction_x
+        self.GAME_CONFIGURATION.scroll_fraction_y = scroll_fraction_y
+        self.GAME_CONFIGURATION.background_color = background_color
+        self.GAME_CONFIGURATION.border_color = border_color
+
+        return self.GAME_CONFIGURATION
+
+    def JoinGame(self, request, context):
         #  Possible directions:
         directions = ['Up', 'Down', 'Left', 'Right']
 
-        self.MAX_X = request.maxX
-        self.MAX_Y = request.maxY
+        x = random.randint(10, self.GAME_CONFIGURATION.max_x - 10)
+        y = random.randint(10, self.GAME_CONFIGURATION.max_y - 10)
 
-        x, y = random.randint(10, self.MAX_X - 10), random.randint(10, self.MAX_Y - 10)
         body = [Point(x=x, y=y)]  # Random head
         if random.randint(0, 1):
             r = random.choice([-1, 1])
@@ -51,42 +94,29 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
             y += random.choice([-1, 1])
         body.append(Point(x=x, y=y))
 
+        color = random.choice(self.AVAILABLE_COLORS)
+        self.AVAILABLE_COLORS.remove(color)
+
         snake = Snake(
-            color=self.AVAILABLE_COLORS.pop(),
+            name=request.name,
+            color=color,
             direction=random.choice(directions),
             body=body
         )
-        self.SNAKES.update({snake.color: snake})
+
+        self.SNAKES.update({snake.name: snake})
         return snake
 
-    def addUsername(self, request, context):
-        snake = self.SNAKES.get(request.color)
-        snake.username = request.username
-        self.SNAKES.update()
+    def MoveSnake(self, request, context):
+        snake = self.SNAKES.get(request.name, None)
+        direction = request.direction
 
-        return snake
+        if {snake.direction, direction} in self.OPPOSITE_DIRECTIONS:
+            direction = snake.direction
 
-    def removeSnake(self, request, context):
-        snake = self.SNAKES.pop(request.color, None)
-        if snake is not None:
-            self.AVAILABLE_COLORS.append(snake.color)
-        return request
-
-    def moveSnake(self, request, context):
-        # MoveRequest(color= ... , direction=...)
-        new_direction = request.direction
-        snake = self.SNAKES.get(request.color, None)
-
-        opposite_directions = [{'Up', 'Down'}, {'Left', 'Right'}]
-        if {snake.direction, new_direction} in opposite_directions:
-            new_direction = snake.direction
-        # [Point(x=2, y=0), Point(x=1, y=0), Point(x=0, y=0)]
         new_head = Point(x=snake.body[0].x, y=snake.body[0].y)
-
-        if new_direction == "Right" or new_direction == 'Left':
-            new_head.x = snake.body[0].x + self.DIRECTIONS.get(new_direction, 0)
-        else:
-            new_head.y = snake.body[0].y + self.DIRECTIONS.get(new_direction, 0)
+        new_head.x += self.DIRECTIONS[direction].x
+        new_head.y += self.DIRECTIONS[direction].y
 
         if new_head in self.FOODS:
             self.FOODS.remove(new_head)
@@ -96,78 +126,161 @@ class SnakeGame(snake_pb2_grpc.SnakeServiceServicer):
             snake.body.pop()
 
         snake.body.insert(0, new_head)
-        snake.direction = new_direction
-
+        snake.direction = direction
         return snake
 
-    def checkCollision(self, request, context):
-        snake = self.SNAKES.get(request.color, None)
+    def GetAllSnakes(self, request, context):
+        x, y = request.x, request.y
+        x_scroll = x * self.GAME_CONFIGURATION.scroll_fraction_x - self.GAME_CONFIGURATION.scroll_response_x
+        y_scroll = y * self.GAME_CONFIGURATION.scroll_fraction_y - self.GAME_CONFIGURATION.scroll_response_y
+
+        x_vision = 1 if 0 < x_scroll < 0.7 else 0
+        y_vision = 1 if 0 < y_scroll < 0.7 else 0
+
+        list_of_points = []
+        for snake in self.SNAKES.values():
+            snake_segment = map(lambda p: SnakeSegment(point=p, color=snake.color), snake.body)
+            list_of_points.extend(snake_segment)
+
+        for segment in list_of_points:
+            if abs(segment.point.x - x) < 30 - 14 * x_vision and abs(segment.point.y - y) < 30 - 14 * y_vision:
+                yield segment
+
+    def CheckCollision(self, request, context):
+        snake = self.SNAKES.get(request.name, None)
         head_x, head_y = snake.body[0].x, snake.body[0].y
 
         # Self_snake:
         if Point(x=head_x, y=head_y) in snake.body[1:] or \
-                head_x in (0, self.MAX_X - 1) or \
-                head_y in (0, self.MAX_Y - 1):
-            self.turn_snake_to_food(snake)
-            return snake_pb2.CollisionResponse(has_collided=True)  # return True
+                head_x in (0, self.GAME_CONFIGURATION.max_x - 1) or \
+                head_y in (0, self.GAME_CONFIGURATION.max_y - 1):
+            return CollisionResponse(has_collided=True)  # return True
 
         other_snakes = self.SNAKES.copy()
-        other_snakes.pop(request.color)
+        other_snakes.pop(request.name)
 
         # Check for other snakes
         for s in other_snakes.values():
             if Point(x=head_x, y=head_y) in s.body:
-                self.turn_snake_to_food(snake)
-                return snake_pb2.CollisionResponse(has_collided=True)
+                return CollisionResponse(has_collided=True)
 
-        return snake_pb2.CollisionResponse(has_collided=False)  # Return False
+        return CollisionResponse(has_collided=False)
 
-    def getSnakes(self, request, context):
-        for snake in self.SNAKES.values():
-            yield snake
+    def GetFood(self, request, context):
+        x, y = request.x, request.y
+        x_scroll = x * self.GAME_CONFIGURATION.scroll_fraction_x - self.GAME_CONFIGURATION.scroll_response_x
+        y_scroll = y * self.GAME_CONFIGURATION.scroll_fraction_y - self.GAME_CONFIGURATION.scroll_response_y
+        x_vision = 1 if 0 < x_scroll < 0.7 else 0
+        y_vision = 1 if 0 < y_scroll < 0.7 else 0
 
-    def getFood(self, request, context):
         if len(self.FOODS) == 0:
             self.add_food()
         for food in self.FOODS:
-            yield food
+            if abs(food.x - x) < 30 - 14 * x_vision and abs(food.y - y) < 30 - 14 * y_vision:
+                yield food
 
-    def addMoreFood(self, request, context):
-        self.add_food()
-        return request
+    def AddMoreFood(self, request, context):
+        return self.add_food()
+
+    def KillSnake(self, request, context):
+        snake = self.SNAKES.get(request.name, None)
+        self.turn_snake_to_food(snake)
+        return snake
+
+    def GetCurrentPlayerScores(self, request, context):
+        scores = []
+        for s in self.SNAKES.values():
+            scores.append(Score(name=s.name, color=s.color, score=len(s.body) - 3))
+        scores.sort(key=lambda x: x.score, reverse=True)  # Sort list in descending order
+        return ScoreResponse(scores=scores)
+
+    def GetHighScores(self, request, context):
+        cnxn = mysql.connector.connect(**self.config)
+
+        cursor = cnxn.cursor()
+        cursor.execute("USE snake_highscores")
+        cursor.execute("SELECT username, score FROM highscores "
+                       "ORDER BY score DESC")
+        out = cursor.fetchall()
+        high_scores = []
+        for row in out:
+            high_scores.append(Score(name=row[0], score=row[1]))
+
+        cursor.close()
+        cnxn.close()
+        return ScoreResponse(scores=high_scores)
+
+    def turn_snake_to_food(self, snake):
+        self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
+        snake = self.SNAKES.pop(snake.name, None)
+        self.update_highscore(snake)
+        self.AVAILABLE_COLORS.append(snake.color)
 
     def add_food(self):
-        x, y = random.randint(0, self.MAX_X - 1), random.randint(0, self.MAX_Y - 1)
+        x = random.randint(2, self.GAME_CONFIGURATION.max_x - 2)
+        y = random.randint(2, self.GAME_CONFIGURATION.max_y - 2)
         snakes = []
         for snake in self.SNAKES.values():
             snakes.extend(snake.body)
 
         p = Point(x=x, y=y)
-        while p in snakes or p in self.FOODS:
-            x, y = random.randint(0, self.MAX_X - 1), random.randint(0, self.MAX_X - 1)
-            p = Point(x=x, y=y)
+        while p in snakes:
+            p = Point(
+                x=random.randint(2, self.GAME_CONFIGURATION.max_x - 2),
+                y=random.randint(2, self.GAME_CONFIGURATION.max_y - 2)
+            )
 
         self.FOODS.append(p)
+        return p
 
-    def turn_snake_to_food(self, snake):
-        self.FOODS.append(random.choice(snake.body))
-        self.SNAKES.pop(snake.color, None)
-        self.AVAILABLE_COLORS.append(snake.color)
+    def update_highscore(self, snake):
+        cnxn = mysql.connector.connect(**self.config)
+        cursor = cnxn.cursor(buffered=True)
+        cursor.execute("USE snake_highscores")
+
+        # Create table if the table doesn't exists:
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS highscores "
+            "("
+            "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
+            "username VARCHAR(30) NOT NULL, "
+            "score int(6)"
+            ")"
+        )
+
+        # Check if username exists in table
+        cursor.execute(
+            f"SELECT username, score FROM highscores "
+            f"WHERE username = '{snake.name}'"
+        )
+        out = cursor.fetchall()
+        score = len(snake.body) - 3
+        if len(out) > 0:
+            if score > out[0][1]:  # Update highscore if user got a new high score
+                query = "UPDATE highscores SET score=%s WHERE username=%s"
+                data = (score, snake.name)
+                cursor.execute(query, data)
+                cnxn.commit()
+        else:  # User does not exists
+            query = "INSERT INTO highscores(username, score) VALUES (%s, %s)"
+            data = (snake.name, score)
+            cursor.execute(query, data)
+            cnxn.commit()
+        cursor.close()
+        cnxn.close()
 
 
 def serve():
-    with open('server.key', 'rb') as f:
+    with open('key.pem', 'rb') as f:
         private_key = f.read()
-    with open('server.crt', 'rb') as f:
+    with open('cert.pem', 'rb') as f:
         certificate_chain = f.read()
-    server_credentials = grpc.ssl_server_credentials(
-        ((private_key, certificate_chain),)
-    )
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
+    server_credentials = grpc.ssl_server_credentials(((private_key, certificate_chain,),))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     snake_pb2_grpc.add_SnakeServiceServicer_to_server(
-        SnakeGame(), server
+        SnakeService(), server
     )
-    server.add_insecure_port('[::]:50051')
+    server.add_secure_port('[::]:50051', server_credentials)
     server.start()
     print("Snake server is running...")
     server.wait_for_termination()
