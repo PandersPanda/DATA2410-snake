@@ -306,7 +306,10 @@ def submit_name(username, tkinter_objects):
 
 def establish_stub():
     global stub
-    channel = grpc.insecure_channel(f'{host}:{port}')
+    with open('cert.pem', 'rb') as f:
+        trusted_certs = f.read()
+    credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
+    channel = grpc.secure_channel(f'{host}:{port}', credentials)
     stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
 

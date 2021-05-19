@@ -271,11 +271,16 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=20))
+    with open('key.pem', 'rb') as f:
+        private_key = f.read()
+    with open('cert.pem', 'rb') as f:
+        certificate_chain = f.read()
+    server_credentials = grpc.ssl_server_credentials(((private_key, certificate_chain,),))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     snake_pb2_grpc.add_SnakeServiceServicer_to_server(
         SnakeService(), server
     )
-    server.add_insecure_port('[::]:50051')
+    server.add_secure_port('[::]:50051', server_credentials)
     server.start()
     print("Snake server is running...")
     server.wait_for_termination()
