@@ -6,11 +6,13 @@ import sys
 import threading
 import random
 import time
+import os
 
 root = tkinter.Tk()
 game_canvas = None
 score_window = None
-host = 'localhost'
+host = '127.0.0.1'
+hostname = 'snakenet'
 port = 50051
 
 GAME_CONFIGURATION = snake_pb2.GameConfig()
@@ -315,10 +317,14 @@ def submit_name(username, tkinter_objects):
 
 def establish_stub():
     global stub
-    with open('cert.pem', 'rb') as f:
+    with open('crt.pem', 'rb') as f:
         trusted_certs = f.read()
     credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
-    channel = grpc.secure_channel(f'{host}:{port}', credentials)
+    channel = grpc.secure_channel(
+        f'{host}:{port}',
+        credentials,
+        options=(('grpc.ssl_target_name_override', hostname),)
+    )
     stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
 
@@ -340,7 +346,8 @@ def main():
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
     try:
         GAME_CONFIGURATION = stub.GetGameConfigurations(snake_pb2.GetRequest())
-    except grpc.RpcError:
+    except grpc.RpcError as e:
+        print(e)
         sys.exit(f'Cannot establish communication with server at {host}:{port}')
 
     # Set root window size and disable resizing

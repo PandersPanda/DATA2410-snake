@@ -14,94 +14,116 @@ class SnakeServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.addSnake = channel.unary_unary(
-                '/SnakeService/addSnake',
+        self.GetGameConfigurations = channel.unary_unary(
+                '/SnakeService/GetGameConfigurations',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.GameConfig.FromString,
+                )
+        self.JoinGame = channel.unary_unary(
+                '/SnakeService/JoinGame',
                 request_serializer=snake__pb2.JoinRequest.SerializeToString,
                 response_deserializer=snake__pb2.Snake.FromString,
                 )
-        self.removeSnake = channel.unary_unary(
-                '/SnakeService/removeSnake',
-                request_serializer=snake__pb2.Snake.SerializeToString,
-                response_deserializer=snake__pb2.Snake.FromString,
-                )
-        self.moveSnake = channel.unary_unary(
-                '/SnakeService/moveSnake',
+        self.MoveSnake = channel.unary_unary(
+                '/SnakeService/MoveSnake',
                 request_serializer=snake__pb2.MoveRequest.SerializeToString,
                 response_deserializer=snake__pb2.Snake.FromString,
                 )
-        self.getSnakes = channel.unary_stream(
-                '/SnakeService/getSnakes',
-                request_serializer=snake__pb2.GetRequest.SerializeToString,
-                response_deserializer=snake__pb2.Snake.FromString,
+        self.GetAllSnakes = channel.unary_stream(
+                '/SnakeService/GetAllSnakes',
+                request_serializer=snake__pb2.Point.SerializeToString,
+                response_deserializer=snake__pb2.SnakeSegment.FromString,
                 )
-        self.getFood = channel.unary_stream(
-                '/SnakeService/getFood',
-                request_serializer=snake__pb2.FoodRequest.SerializeToString,
+        self.GetFood = channel.unary_stream(
+                '/SnakeService/GetFood',
+                request_serializer=snake__pb2.Point.SerializeToString,
                 response_deserializer=snake__pb2.Point.FromString,
                 )
-        self.addMoreFood = channel.unary_unary(
-                '/SnakeService/addMoreFood',
-                request_serializer=snake__pb2.FoodRequest.SerializeToString,
-                response_deserializer=snake__pb2.FoodRequest.FromString,
+        self.AddMoreFood = channel.unary_unary(
+                '/SnakeService/AddMoreFood',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.Point.FromString,
                 )
-        self.checkCollision = channel.unary_unary(
-                '/SnakeService/checkCollision',
+        self.CheckCollision = channel.unary_unary(
+                '/SnakeService/CheckCollision',
                 request_serializer=snake__pb2.CollisionRequest.SerializeToString,
                 response_deserializer=snake__pb2.CollisionResponse.FromString,
                 )
-        self.addUsername = channel.unary_unary(
-                '/SnakeService/addUsername',
-                request_serializer=snake__pb2.UsernameRequest.SerializeToString,
+        self.KillSnake = channel.unary_unary(
+                '/SnakeService/KillSnake',
+                request_serializer=snake__pb2.KillSnakeRequest.SerializeToString,
                 response_deserializer=snake__pb2.Snake.FromString,
+                )
+        self.GetCurrentPlayerScores = channel.unary_unary(
+                '/SnakeService/GetCurrentPlayerScores',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.ScoreResponse.FromString,
+                )
+        self.GetHighScores = channel.unary_unary(
+                '/SnakeService/GetHighScores',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.ScoreResponse.FromString,
                 )
 
 
 class SnakeServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def addSnake(self, request, context):
+    def GetGameConfigurations(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def removeSnake(self, request, context):
+    def JoinGame(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def moveSnake(self, request, context):
+    def MoveSnake(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def getSnakes(self, request, context):
+    def GetAllSnakes(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def getFood(self, request, context):
+    def GetFood(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def addMoreFood(self, request, context):
+    def AddMoreFood(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def checkCollision(self, request, context):
+    def CheckCollision(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def addUsername(self, request, context):
+    def KillSnake(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCurrentPlayerScores(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetHighScores(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -110,45 +132,55 @@ class SnakeServiceServicer(object):
 
 def add_SnakeServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'addSnake': grpc.unary_unary_rpc_method_handler(
-                    servicer.addSnake,
+            'GetGameConfigurations': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetGameConfigurations,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    response_serializer=snake__pb2.GameConfig.SerializeToString,
+            ),
+            'JoinGame': grpc.unary_unary_rpc_method_handler(
+                    servicer.JoinGame,
                     request_deserializer=snake__pb2.JoinRequest.FromString,
                     response_serializer=snake__pb2.Snake.SerializeToString,
             ),
-            'removeSnake': grpc.unary_unary_rpc_method_handler(
-                    servicer.removeSnake,
-                    request_deserializer=snake__pb2.Snake.FromString,
-                    response_serializer=snake__pb2.Snake.SerializeToString,
-            ),
-            'moveSnake': grpc.unary_unary_rpc_method_handler(
-                    servicer.moveSnake,
+            'MoveSnake': grpc.unary_unary_rpc_method_handler(
+                    servicer.MoveSnake,
                     request_deserializer=snake__pb2.MoveRequest.FromString,
                     response_serializer=snake__pb2.Snake.SerializeToString,
             ),
-            'getSnakes': grpc.unary_stream_rpc_method_handler(
-                    servicer.getSnakes,
-                    request_deserializer=snake__pb2.GetRequest.FromString,
-                    response_serializer=snake__pb2.Snake.SerializeToString,
+            'GetAllSnakes': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetAllSnakes,
+                    request_deserializer=snake__pb2.Point.FromString,
+                    response_serializer=snake__pb2.SnakeSegment.SerializeToString,
             ),
-            'getFood': grpc.unary_stream_rpc_method_handler(
-                    servicer.getFood,
-                    request_deserializer=snake__pb2.FoodRequest.FromString,
+            'GetFood': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetFood,
+                    request_deserializer=snake__pb2.Point.FromString,
                     response_serializer=snake__pb2.Point.SerializeToString,
             ),
-            'addMoreFood': grpc.unary_unary_rpc_method_handler(
-                    servicer.addMoreFood,
-                    request_deserializer=snake__pb2.FoodRequest.FromString,
-                    response_serializer=snake__pb2.FoodRequest.SerializeToString,
+            'AddMoreFood': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddMoreFood,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    response_serializer=snake__pb2.Point.SerializeToString,
             ),
-            'checkCollision': grpc.unary_unary_rpc_method_handler(
-                    servicer.checkCollision,
+            'CheckCollision': grpc.unary_unary_rpc_method_handler(
+                    servicer.CheckCollision,
                     request_deserializer=snake__pb2.CollisionRequest.FromString,
                     response_serializer=snake__pb2.CollisionResponse.SerializeToString,
             ),
-            'addUsername': grpc.unary_unary_rpc_method_handler(
-                    servicer.addUsername,
-                    request_deserializer=snake__pb2.UsernameRequest.FromString,
+            'KillSnake': grpc.unary_unary_rpc_method_handler(
+                    servicer.KillSnake,
+                    request_deserializer=snake__pb2.KillSnakeRequest.FromString,
                     response_serializer=snake__pb2.Snake.SerializeToString,
+            ),
+            'GetCurrentPlayerScores': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCurrentPlayerScores,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    response_serializer=snake__pb2.ScoreResponse.SerializeToString,
+            ),
+            'GetHighScores': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetHighScores,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
+                    response_serializer=snake__pb2.ScoreResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -161,7 +193,7 @@ class SnakeService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def addSnake(request,
+    def GetGameConfigurations(request,
             target,
             options=(),
             channel_credentials=None,
@@ -171,14 +203,31 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/addSnake',
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/GetGameConfigurations',
+            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.GameConfig.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def JoinGame(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/JoinGame',
             snake__pb2.JoinRequest.SerializeToString,
             snake__pb2.Snake.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def removeSnake(request,
+    def MoveSnake(request,
             target,
             options=(),
             channel_credentials=None,
@@ -188,31 +237,14 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/removeSnake',
-            snake__pb2.Snake.SerializeToString,
-            snake__pb2.Snake.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def moveSnake(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/moveSnake',
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/MoveSnake',
             snake__pb2.MoveRequest.SerializeToString,
             snake__pb2.Snake.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def getSnakes(request,
+    def GetAllSnakes(request,
             target,
             options=(),
             channel_credentials=None,
@@ -222,14 +254,14 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/SnakeService/getSnakes',
-            snake__pb2.GetRequest.SerializeToString,
-            snake__pb2.Snake.FromString,
+        return grpc.experimental.unary_stream(request, target, '/SnakeService/GetAllSnakes',
+            snake__pb2.Point.SerializeToString,
+            snake__pb2.SnakeSegment.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def getFood(request,
+    def GetFood(request,
             target,
             options=(),
             channel_credentials=None,
@@ -239,14 +271,14 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/SnakeService/getFood',
-            snake__pb2.FoodRequest.SerializeToString,
+        return grpc.experimental.unary_stream(request, target, '/SnakeService/GetFood',
+            snake__pb2.Point.SerializeToString,
             snake__pb2.Point.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def addMoreFood(request,
+    def AddMoreFood(request,
             target,
             options=(),
             channel_credentials=None,
@@ -256,14 +288,14 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/addMoreFood',
-            snake__pb2.FoodRequest.SerializeToString,
-            snake__pb2.FoodRequest.FromString,
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/AddMoreFood',
+            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.Point.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def checkCollision(request,
+    def CheckCollision(request,
             target,
             options=(),
             channel_credentials=None,
@@ -273,14 +305,14 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/checkCollision',
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/CheckCollision',
             snake__pb2.CollisionRequest.SerializeToString,
             snake__pb2.CollisionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def addUsername(request,
+    def KillSnake(request,
             target,
             options=(),
             channel_credentials=None,
@@ -290,8 +322,42 @@ class SnakeService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/SnakeService/addUsername',
-            snake__pb2.UsernameRequest.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/KillSnake',
+            snake__pb2.KillSnakeRequest.SerializeToString,
             snake__pb2.Snake.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetCurrentPlayerScores(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/GetCurrentPlayerScores',
+            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.ScoreResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetHighScores(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SnakeService/GetHighScores',
+            snake__pb2.GetRequest.SerializeToString,
+            snake__pb2.ScoreResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
