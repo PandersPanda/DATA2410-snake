@@ -217,8 +217,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         self.AVAILABLE_COLORS.append(snake.color)
 
     def add_food(self):
-        x = random.randint(0, self.GAME_CONFIGURATION.max_x - 1)
-        y = random.randint(0, self.GAME_CONFIGURATION.max_y - 1)
+        x = random.randint(2, self.GAME_CONFIGURATION.max_x - 1)
+        y = random.randint(2, self.GAME_CONFIGURATION.max_y - 1)
         snakes = []
         for snake in self.SNAKES.values():
             snakes.extend(snake.body)
@@ -226,8 +226,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         p = Point(x=x, y=y)
         while p in snakes:
             p = Point(
-                x=random.randint(0, self.GAME_CONFIGURATION.max_x - 1),
-                y=random.randint(0, self.GAME_CONFIGURATION.max_y - 1)
+                x=random.randint(2, self.GAME_CONFIGURATION.max_x - 1),
+                y=random.randint(2, self.GAME_CONFIGURATION.max_y - 1)
             )
 
         self.FOODS.append(p)

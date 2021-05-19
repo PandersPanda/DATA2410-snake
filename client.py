@@ -94,6 +94,14 @@ def move_snake():
     scroll_lock_movement()
 
 
+def draw_game_board():
+    assert isinstance(game_canvas, tkinter.Canvas)
+    # Draw border:
+    game_canvas.create_rectangle(
+        0, 0, GAME_CONFIGURATION.board_width + 1.5, GAME_CONFIGURATION.board_height + 1.5,
+        fill='', outline=GAME_CONFIGURATION.border_color, width=2 * GAME_CONFIGURATION.snake_size)
+
+
 def draw_segment(s):
     assert isinstance(game_canvas, tkinter.Canvas)
     game_canvas.create_rectangle(
@@ -189,7 +197,7 @@ def draw_foods():
     game_canvas.delete('food')
     foods = stub.GetFood(snake.body[0])
     for f in foods:
-        food = game_canvas.create_oval(
+        game_canvas.create_oval(
             (f.x + .75) * GAME_CONFIGURATION.snake_size,
             (f.y + .75) * GAME_CONFIGURATION.snake_size,
             (f.x + .25) * GAME_CONFIGURATION.snake_size,
@@ -197,7 +205,7 @@ def draw_foods():
             fill='white',
             tag='food'
         )
-        game_canvas.tag_lower(food)
+    game_canvas.tag_raise('food')
 
 
 def game_flow():
@@ -267,11 +275,11 @@ def start_game():
     game_canvas.config(
         scrollregion=[0, 0, GAME_CONFIGURATION.board_width, GAME_CONFIGURATION.board_height]
     )
-    game_canvas.create_rectangle(
-        0, 0, GAME_CONFIGURATION.board_width + 1.5, GAME_CONFIGURATION.board_height + 1.5,
-        fill='', outline=GAME_CONFIGURATION.border_color, width=2 * GAME_CONFIGURATION.snake_size)
     game_canvas.grid(row=0, column=0)
     game_canvas.bind_all('<Key>', change_snake_direction)
+
+    draw_game_board()
+
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
     game_flow()
