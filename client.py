@@ -205,7 +205,7 @@ def draw_foods():
             fill='white',
             tag='food'
         )
-    game_canvas.tag_raise('food')
+    game_canvas.tag_lower('food')
 
 
 def game_flow():
@@ -282,6 +282,7 @@ def start_game():
 
     random_food_thread = threading.Thread(target=random_food, daemon=True)
     random_food_thread.start()
+
     game_flow()
 
 
