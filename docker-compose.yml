@@ -28,7 +28,7 @@ services:
   snake-service:
     build:
       context: .
-      dockerfile: service/Dockerfile
+      dockerfile: Dockerfile
     image: snake-service
     container_name: snake-service
     ports:
