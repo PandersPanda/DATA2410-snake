@@ -51,7 +51,10 @@ From here enter
 ````commandline
 python3 client.py
 ````
-to start the game.
+to start the game. In addition, if one wishes to watch a bot play you can start the game with
+````commandline
+python3 client.py --bot
+````
 
 ---
 
@@ -89,11 +92,13 @@ For this project we were also provided some user stories to be fulfilled:
   > To the right of the game there is a list of connected players matching the color of their snake together with their 
   > current score relative to all the other connected players. It has also been tested that a minimum of 2 players can
   > play on the same board against each other at the same time.
-  - [ ] There may be other players operated by the software (e.g. return of the bots - as snakes!) but this is not a 
+  - [x] There may be other players operated by the software (e.g. return of the bots - as snakes!) but this is not a 
     requirement. If there are bots they behave like any other player, and I won't be able to tell the difference 
     (except maybe if they play really badly or superhumanly well)
-    > At one time we did implement bots. However, it was later removed due to refactoring and issues with the GUI. 
-    > Since, this also was not a requirement we decided to drop it all together.
+    > There is an attempt to add bots to the to the game. However, they are not very smart and often run into
+    > themselves if they get too long. This is because no optimal path algorithm has been implemented and just a simple
+    > calculation to avoid collision is added to the intelligence of the bot. It also, uses random movement when there
+    > are more options available.
 - [x] I can get the snake to grow by running into "food". The food can be just colored squares but I can see that 
   they're different from walls if there are any.
   > Each food will grow the snake by one size, and also provide 1 point towards your final score. Since, the snake are
@@ -168,14 +173,20 @@ this task we tried to aim for as many of them as possible after we were done wit
   > The documentation for cAdvisor can be found 
   > **[here](https://github.com/google/cadvisor/blob/master/docs/storage/prometheus.md)**. It is also possible to track 
   > the resource usage of the game server by going directly to cAdvisor at http://localhost:8080/docker/snake-service. 
-  > Unfortunately since we did not include bots in our game it was hard to monitor the resource usage for many players.
+  > 
 - [x] Allow for many (>10) or unlimited players. This will require you to manage a large grid and you probably have to
   make the game board itself scroll around the snake than to make the snakes move around the game board. 
   > The game board is set to be 16 times as large as the window that you will see to account for many players. The food
   > is also randomly generated ever 1 to 2 seconds, so the game board does not become a bare wasteland. In addition,
   > the server always ensures that there is at least 1 food on the game board at all times.
-- [ ] Add bots. This is a good way to test the scalability of your service by pushing it to the limit. 
-  > Time constraint and priority of other tasks did not allow us to implement bots in this project.
+- [x] Add bots. This is a good way to test the scalability of your service by pushing it to the limit. 
+  > Bots has been implemented into the game. Start a bot with
+  > ````commandline
+  > python3 client.py --bot
+  >````
+  > They are however, not very smart and tends to die pretty fast if they achieve some length. A simple check to choose
+  > a new direction if it can anticipate collision is added but more than not it will just choose a random direction if
+  > it thinks it will collide and trap itself.
 - [x] Add a persistent high-score list with a database backend. Note that high-score lists can be fairly hard to keep 
   from being hacked (I've tried!). Some intelligent notes on why that is, and a possible solution would be an 
   interesting read.

@@ -100,13 +100,11 @@ def death_move(new_direction, snake_segments):
     elif new_direction == 'Up':
         head.y = (head.y - 1)
 
-    stupid = (
+    return (
         head in snake_segments
         or head.x in (0, GAME_CONFIGURATION.board_width - 1)
         or head.y in (0, GAME_CONFIGURATION.board_height - 1)
     )
-    print(stupid)
-    return stupid
 
 
 def avoid_collision(new_direction):
@@ -124,7 +122,6 @@ def avoid_collision(new_direction):
         new_direction = random.choice(moves)
         moves.remove(new_direction)
         stupid_move = death_move(new_direction, obstacles)
-        print(stupid_move)
 
     return new_direction
 
