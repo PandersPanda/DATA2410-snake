@@ -6,6 +6,7 @@ import sys
 import threading
 import random
 import time
+import argparse
 
 root = tkinter.Tk()
 game_canvas = None
@@ -18,6 +19,7 @@ GAME_CONFIGURATION = snake_pb2.GameConfig()
 stub = None
 snake = snake_pb2.Snake()
 direction = None
+target = snake_pb2.Point()
 
 
 def show_high_scores():
@@ -85,10 +87,86 @@ def scroll_lock_movement():
     )
 
 
+def death_move(new_direction, snake_segments):
+    global snake
+
+    head = snake_pb2.Point(x=snake.body[0].x, y=snake.body[0].y)
+    if new_direction == 'Right':
+        head.x = (head.x + 1)
+    elif new_direction == 'Left':
+        head.x = (head.x - 1)
+    elif new_direction == 'Down':
+        head.y = (head.y + 1)
+    elif new_direction == 'Up':
+        head.y = (head.y - 1)
+
+    stupid = (
+        head in snake_segments
+        or head.x in (0, GAME_CONFIGURATION.board_width - 1)
+        or head.y in (0, GAME_CONFIGURATION.board_height - 1)
+    )
+    print(stupid)
+    return stupid
+
+
+def avoid_collision(new_direction):
+    global snake
+    moves = ['Up', 'Down', 'Left', 'Right']
+
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    snake_segments = stub.GetAllSnakes(snake.body[0])
+    obstacles = list(map(lambda s: s.point, snake_segments))
+    obstacles.remove(snake.body[0])
+    stupid_move = death_move(new_direction, obstacles)
+    while stupid_move:
+        if len(moves) == 0:
+            return direction
+        new_direction = random.choice(moves)
+        moves.remove(new_direction)
+        stupid_move = death_move(new_direction, obstacles)
+        print(stupid_move)
+
+    return new_direction
+
+
+def bot_direction():
+    global target
+
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    foods = list(stub.GetFood(snake.body[0]))
+    if len(foods) == 0:
+        foods = list(stub.GetAllFood(snake_pb2.GetRequest()))
+    if target not in foods:
+        target = random.choice(foods)
+
+    target_x = target.x - snake.body[0].x
+    target_y = target.y - snake.body[0].y
+    if target_x < 0:
+        new_direction = 'Left'
+        if {direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]:
+            new_direction = random.choice(['Up', 'Down'])
+    elif target_x > 0:
+        new_direction = 'Right'
+        if {direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]:
+            new_direction = random.choice(['Up', 'Down'])
+    elif target_y < 0:
+        new_direction = 'Up'
+        if {direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]:
+            new_direction = random.choice(['Left', 'Right'])
+    else:
+        new_direction = 'Down'
+        if {direction, new_direction} in [{'Up', 'Down'}, {'Left', 'Right'}]:
+            new_direction = random.choice(['Left', 'Right'])
+    return avoid_collision(new_direction)
+
+
 def move_snake():
     global snake
     global direction
     global stub
+
+    if snake.is_bot:
+        direction = bot_direction()
 
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
     snake = stub.MoveSnake(snake_pb2.MoveRequest(name=snake.name, direction=direction))
@@ -147,22 +225,28 @@ def game_over():
     game_canvas.grid_forget()
 
     game_over_lb = tkinter.Label(root, text="Game Over", font=("Bold", 35))
-    game_over_lb.place(x=200, y=200)
+    game_over_lb.place(x=200, y=100)
 
-    score_lb = tkinter.Label(root, text=f"Your final score is {len(snake.body) - 3} points.")
-    score_lb.place(x=200, y=260)
+    score_lb = tkinter.Label(root, text=f"Your final score is\n{len(snake.body) - 3} points!", font=("bold", 20))
+    score_lb.place(x=200, y=210)
 
     replay_button = tkinter.Button(root, text="Play again", width=10, height=1, bg="red", activebackground="#cf0000",
                                    font=("bold", 20),
-                                   command=lambda: replay([game_over_lb, score_lb, replay_button, quit_button]),
+                                   command=lambda: replay(
+                                       [game_over_lb, score_lb, replay_button, high_score_button, quit_button]
+                                   ),
                                    bd=3)
     replay_button.place(x=220, y=300)
+
+    high_score_button = tkinter.Button(width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
+                                       command=show_high_scores, text="High scores", bd=3)
+    high_score_button.place(x=220, y=370)
 
     quit_button = tkinter.Button(root, text="Quit", width=10, height=1, bg="red", activebackground="#cf0000",
                                  font=("bold", 20),
                                  command=root.quit,
                                  bd=3)
-    quit_button.place(x=220, y=370)
+    quit_button.place(x=220, y=440)
 
 
 def check_collision():
@@ -173,8 +257,11 @@ def check_collision():
     )
     if collision.has_collided:
         stub.KillSnake(snake_pb2.KillSnakeRequest(name=snake.name))
-        print(f"You died, final score for: {len(snake.body) - 3}")
-        game_over()
+        if snake.is_bot:
+            print(f"{snake.name} (bot) was able to accumulate {len(snake.body) - 3} points before it died.")
+            root.quit()
+        else:
+            game_over()
 
     return collision.has_collided
 
@@ -252,6 +339,7 @@ def start_game():
     global game_canvas
     global score_window
     global GAME_CONFIGURATION
+    global snake
 
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
 
@@ -277,7 +365,8 @@ def start_game():
         scrollregion=[0, 0, GAME_CONFIGURATION.board_width, GAME_CONFIGURATION.board_height]
     )
     game_canvas.grid(row=0, column=0)
-    game_canvas.bind_all('<Key>', change_snake_direction)
+    if not snake.is_bot:
+        game_canvas.bind_all('<Key>', change_snake_direction)
 
     draw_game_board()
 
@@ -305,12 +394,13 @@ def submit_name(username, tkinter_objects):
     try:
         snake = stub.JoinGame(snake_pb2.JoinRequest(name=username))  # Returns a snake
         direction = snake.direction
-    except grpc.RpcError:
-        sys.exit('This room is full of snakes!')
+    except grpc.RpcError as e:
+        sys.exit(e)
 
     for o in tkinter_objects:
         o.destroy()
 
+    root.unbind('<Return>')
     start_game()
 
 
@@ -339,33 +429,22 @@ def on_closing():
     root.quit()
 
 
-def main():
-    # Get the determined game configurations from the server
-    global GAME_CONFIGURATION
-    establish_stub()  # Establish stub, own function for later modifications if necessary
-    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
-    try:
-        GAME_CONFIGURATION = stub.GetGameConfigurations(snake_pb2.GetRequest())
-    except grpc.RpcError as e:
-        print(e)
-        sys.exit(f'Cannot establish communication with server at {host}:{port}')
-
-    # Set root window size and disable resizing
-    root.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
-    root.resizable(False, False)
-    root.title('Snake Game')
-
-    # Index page:
+def show_index_page():
     username_var = tkinter.StringVar()
-    bg = tkinter.PhotoImage(file="snake.png")
-    label1 = tkinter.Label(root, image=bg)
-    label1.place(x=0, y=100)
-
     username_var = tkinter.StringVar()
 
     title_label = tkinter.Label(root, text='Username:', font=("bold", 20))
     message_label = tkinter.Label(text='', font=("cursive", 11))
     user_name_input = tkinter.Entry(textvariable=username_var, font=('calibre', 20))
+    root.bind('<Return>', lambda e: submit_name(
+        username_var.get(),
+        [message_label,
+         user_name_input,
+         submit_button,
+         title_label,
+         high_score_button,
+         help_button]
+    ))
     submit_button = tkinter.Button(
         width=10, height=1, bg="red", activebackground="#cf0000", font=("bold", 20),
         command=lambda:
@@ -389,6 +468,41 @@ def main():
     submit_button.place(x=220, y=300)
     help_button.place(x=220, y=380)
     high_score_button.place(x=220, y=460)
+
+
+def main():
+    # Get the determined game configurations from the server
+    global GAME_CONFIGURATION
+    global snake
+    global direction
+    parser = argparse.ArgumentParser(description="Multiplayer snake game client that communicates with a gRPC server"
+                                                 "secured with a self-signed TLS.")
+    parser.add_argument('-b', '--bot', action='store_true', help='Run client as a bot')
+    arguments = parser.parse_args()
+
+    establish_stub()  # Establish stub, own function for later modifications if necessary
+    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
+    try:
+        GAME_CONFIGURATION = stub.GetGameConfigurations(snake_pb2.GetRequest())
+    except grpc.RpcError as e:
+        sys.exit(f'Cannot establish communication with server at {host}:{port}\n'
+                 f'Make sure that the game server container is up and running')
+
+    # Set root window size and disable resizing
+    root.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
+    root.resizable(False, False)
+    root.title('Snake Game')
+    bg = tkinter.PhotoImage(file="snake.png")
+    label1 = tkinter.Label(root, image=bg)
+    label1.place(x=0, y=100)
+
+    # Index page:
+    if arguments.bot:
+        snake = stub.JoinGame(snake_pb2.JoinRequest(is_bot=True))
+        direction = snake.direction
+        start_game()
+    else:
+        show_index_page()
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
     # Run mainloop

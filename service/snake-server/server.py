@@ -11,6 +11,7 @@ import signal
 class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
     GAME_CONFIGURATION = GameConfig()
     AVAILABLE_COLORS = []
+    BOT_NAMES = []
     SNAKES = {}
     DIRECTIONS = {
         'Right': Point(x=1, y=0),
@@ -46,6 +47,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
         with open('tkinter-colors.json', 'r') as f:
             self.AVAILABLE_COLORS.extend(json.load(f))
+        with open('bot-names.json', 'r') as f:
+            self.BOT_NAMES.extend(random.sample(json.load(f), 377))
 
         self.GAME_CONFIGURATION.window_width = window_width
         self.GAME_CONFIGURATION.window_height = window_height
@@ -99,11 +102,17 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         self.AVAILABLE_COLORS.remove(color)
 
         snake = Snake(
-            name=request.name,
+            is_bot=request.is_bot,
             color=color,
             direction=random.choice(directions),
             body=body
         )
+
+        if snake.is_bot:
+            snake.name = random.choice(self.BOT_NAMES)
+            self.BOT_NAMES.remove(snake.name)
+        else:
+            snake.name = request.name
 
         self.SNAKES.update({snake.name: snake})
         return snake
@@ -180,6 +189,12 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
             if abs(food.x - x) < 30 - 14 * x_vision and abs(food.y - y) < 30 - 14 * y_vision:
                 yield food
 
+    def GetAllFood(self, request, context):
+        if len(self.FOODS) == 0:
+            self.add_food()
+        for food in self.FOODS:
+            yield food
+
     def AddMoreFood(self, request, context):
         return self.add_food()
 
@@ -214,8 +229,11 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
     def turn_snake_to_food(self, snake):
         self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
         snake = self.SNAKES.pop(snake.name, None)
-        self.update_highscore(snake)
+        if not snake.is_bot:
+            self.update_highscore(snake)
         self.AVAILABLE_COLORS.append(snake.color)
+        if snake.is_bot:
+            self.BOT_NAMES.append(snake.name)
 
     def add_food(self):
         x = random.randint(2, self.GAME_CONFIGURATION.max_x - 2)

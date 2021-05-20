@@ -21,6 +21,7 @@ message GetRequest {}
 
 message JoinRequest {
   string name = 1;
+  bool is_bot = 2;
 }
 
 message Point {
@@ -30,9 +31,10 @@ message Point {
 
 message Snake {
   string name = 1;
-  string color = 2;
-  string direction = 3;
-  repeated Point body = 4;
+  bool is_bot = 2;
+  string color = 3;
+  string direction = 4;
+  repeated Point body = 5;
 }
 
 message MoveRequest {
@@ -73,6 +75,7 @@ service SnakeService {
   rpc MoveSnake(MoveRequest) returns (Snake);
   rpc GetAllSnakes(Point) returns (stream SnakeSegment);
   rpc GetFood(Point) returns (stream Point);
+  rpc GetAllFood(GetRequest) returns (stream Point);
   rpc AddMoreFood(GetRequest) returns (Point);
   rpc CheckCollision(CollisionRequest) returns (CollisionResponse);
   rpc KillSnake(KillSnakeRequest) returns (Snake);

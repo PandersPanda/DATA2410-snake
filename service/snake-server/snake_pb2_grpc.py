@@ -39,6 +39,11 @@ class SnakeServiceStub(object):
                 request_serializer=snake__pb2.Point.SerializeToString,
                 response_deserializer=snake__pb2.Point.FromString,
                 )
+        self.GetAllFood = channel.unary_stream(
+                '/SnakeService/GetAllFood',
+                request_serializer=snake__pb2.GetRequest.SerializeToString,
+                response_deserializer=snake__pb2.Point.FromString,
+                )
         self.AddMoreFood = channel.unary_unary(
                 '/SnakeService/AddMoreFood',
                 request_serializer=snake__pb2.GetRequest.SerializeToString,
@@ -94,6 +99,12 @@ class SnakeServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetFood(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllFood(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -155,6 +166,11 @@ def add_SnakeServiceServicer_to_server(servicer, server):
             'GetFood': grpc.unary_stream_rpc_method_handler(
                     servicer.GetFood,
                     request_deserializer=snake__pb2.Point.FromString,
+                    response_serializer=snake__pb2.Point.SerializeToString,
+            ),
+            'GetAllFood': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetAllFood,
+                    request_deserializer=snake__pb2.GetRequest.FromString,
                     response_serializer=snake__pb2.Point.SerializeToString,
             ),
             'AddMoreFood': grpc.unary_unary_rpc_method_handler(
@@ -273,6 +289,23 @@ class SnakeService(object):
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/SnakeService/GetFood',
             snake__pb2.Point.SerializeToString,
+            snake__pb2.Point.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAllFood(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/SnakeService/GetAllFood',
+            snake__pb2.GetRequest.SerializeToString,
             snake__pb2.Point.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
