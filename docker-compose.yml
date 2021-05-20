@@ -12,7 +12,7 @@ services:
     depends_on:
       - cadvisor
 
-  cadvisor:
+  cadvisor:  # Taken from https://prometheus.io/docs/guides/cadvisor/
       image: gcr.io/cadvisor/cadvisor:latest
       container_name: cadvisor
       ports:
