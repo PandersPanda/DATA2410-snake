@@ -6,12 +6,11 @@ import sys
 import threading
 import random
 import time
-import os
 
 root = tkinter.Tk()
 game_canvas = None
 score_window = None
-host = '127.0.0.1'
+host = 'localhost'
 hostname = 'snakenet'
 port = 50051
 
@@ -325,6 +324,7 @@ def establish_stub():
         credentials,
         options=(('grpc.ssl_target_name_override', hostname),)
     )
+
     stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
 

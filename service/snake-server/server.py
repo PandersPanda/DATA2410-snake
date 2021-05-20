@@ -5,6 +5,7 @@ from concurrent import futures
 import random
 import json
 import mysql.connector
+import signal
 
 
 class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
@@ -282,7 +283,7 @@ def serve():
     )
     server.add_secure_port('[::]:50051', server_credentials)
     server.start()
-    print("Snake server is running...")
+    signal.signal(signal.SIGTERM, lambda: server.stop(30).wait(30))
     server.wait_for_termination()
 
 
