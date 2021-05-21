@@ -194,3 +194,12 @@ this task we tried to aim for as many of them as possible after we were done wit
   > Google Cloud Platform. Thus, we chose to not run a docker container for the database. The game has implementation
   > to query the database when a snake dies. One can also view a list of high scores of players by clicking on the
   > "High scores" button at the start of the game.
+  
+
+### Some words on SQL-security
+
+By connecting to the database in the server.py-file, some security issues arise. Most obviously,
+the login-information to the database becomes visible to anyone who possesses access to the file.
+We solved this by creating an extra user in the database ("app-user") with very specific rights, instead of using the
+root-user. Although there is no crucial information in the database, we wanted to limit the risk of hackers accessing it
+and deleting information.
