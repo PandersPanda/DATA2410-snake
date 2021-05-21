@@ -1,6 +1,6 @@
 # DATA2410 Spring 2021 Portfolio 2
 
-DATA2410 - Networking and Cloud services is a subject taught at Oslo Metropolitan University. This project is one of
+DATA2410 - Networking and Cloud Computing is a subject taught at Oslo Metropolitan University. This project is one of
 two projects included in the final grade for the subject. Portfolio 2 is about creating a service with a backend
 that should communicate with a frontend. Furthermore, deploying the service with Docker was one of the requirements 
 for this project. Students were supposed to work in teams to develop a solution to the given task. For this project

@@ -1,3 +1,5 @@
+import sys
+
 import snake_pb2_grpc
 from snake_pb2 import GameConfig, Point, Snake, SnakeSegment, CollisionResponse, Score, ScoreResponse
 import grpc
@@ -303,8 +305,12 @@ def serve():
     )
     server.add_secure_port('[::]:50051', server_credentials)
     server.start()
+    print("Server is listening...")
     signal.signal(signal.SIGTERM, lambda: server.stop(30).wait(30))
-    server.wait_for_termination()
+    try:
+        server.wait_for_termination()
+    except KeyboardInterrupt:
+        sys.exit("Closing the server!")
 
 
 if __name__ == '__main__':
