@@ -1,0 +1,1 @@
+FOR /L %%I IN (1, 1, %1) DO start py client.py --bot

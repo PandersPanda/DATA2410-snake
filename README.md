@@ -197,7 +197,7 @@ this task we tried to aim for as many of them as possible after we were done wit
   > A database has been added to the server side of the code to keep track of the scores. The database was created in
   > Google Cloud Platform. Thus, we chose to not run a docker container for the database. The game has implementation
   > to query the database when a snake dies. One can also view a list of high scores of players by clicking on the
-  > "High scores" button at the start of the game.
+  > "High scores" button at the start of the game or at the "game over" page.
   
 
 ### Some words on SQL-security
