@@ -406,12 +406,11 @@ def establish_stub():
     with open('crt.pem', 'rb') as f:
         trusted_certs = f.read()
     credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
-    channel = grpc.secure_channel(
+    channel = grpc.intercept_channel(grpc.secure_channel(
         f'{host}:{port}',
         credentials,
-        options=(('grpc.ssl_target_name_override', hostname),)
+        options=(('grpc.ssl_target_name_override', hostname),)),
     )
-
     stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
 

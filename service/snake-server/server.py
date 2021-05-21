@@ -201,6 +201,8 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
     def KillSnake(self, request, context):
         snake = self.SNAKES.get(request.name, None)
         self.turn_snake_to_food(snake)
+        if len(self.SNAKES) == 0:
+            self.FOODS.clear()
         return snake
 
     def GetCurrentPlayerScores(self, request, context):

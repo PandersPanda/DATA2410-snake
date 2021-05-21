@@ -110,11 +110,11 @@ For this project we were also provided some user stories to be fulfilled:
 ---
 ### Requirements and implementation options 
 - [x] A minimum of 2 players must be supported
-> We have tested playing with 2 players and know that the game is supported.
+  > We have tested playing with 2 players and know that the game is supported.
 - [ ] You can implement more games than one if you want. You can also choose another game, but make sure to ask the 
   teacher for advice if you do.
-> Due to time constraints and that some of us has enrolled into extra courses this year, consequently had to focus on
-> exams for the additional courses we chose to just focus on the one suggested game (snake).
+  > Due to time constraints and that some of us has enrolled into extra courses this year, consequently had to focus on
+  > exams for the additional courses we chose to just focus on the one suggested game (snake).
 ---
 ### Deployment with Docker
 > There must be a dockerfile for the server that allows you to start a game server using docker build / docker run 
@@ -173,7 +173,8 @@ this task we tried to aim for as many of them as possible after we were done wit
   > The documentation for cAdvisor can be found 
   > **[here](https://github.com/google/cadvisor/blob/master/docs/storage/prometheus.md)**. It is also possible to track 
   > the resource usage of the game server by going directly to cAdvisor at http://localhost:8080/docker/snake-service. 
-  > 
+  > We have also enabled Grafana and it can also be used to visualize the data if preferred at http://localhost:3000.
+  > Our favorite dashboard for this occasion can be imported from https://grafana.com/grafana/dashboards/893.
 - [x] Allow for many (>10) or unlimited players. This will require you to manage a large grid and you probably have to
   make the game board itself scroll around the snake than to make the snakes move around the game board. 
   > The game board is set to be 16 times as large as the window that you will see to account for many players. The food
@@ -186,7 +187,10 @@ this task we tried to aim for as many of them as possible after we were done wit
   >````
   > They are however, not very smart and tends to die pretty fast if they achieve some length. A simple check to choose
   > a new direction if it can anticipate collision is added but more than not it will just choose a random direction if
-  > it thinks it will collide and trap itself.
+  > it thinks it will collide and trap itself. A pathing algorithm could help with this however, it will require this
+  > algorithm to run everytime the snake moves which can take a toll on the client performance. Another solution would
+  > be to use machine learning to improve the bots. However, we have not been diving into AI and machinelearning in
+  > this course, hence, we really did not consider implementing an AI bot for this project.
 - [x] Add a persistent high-score list with a database backend. Note that high-score lists can be fairly hard to keep 
   from being hacked (I've tried!). Some intelligent notes on why that is, and a possible solution would be an 
   interesting read.
