@@ -25,6 +25,7 @@ Our implementation of this portfolio can also be found on [GitHub](https://githu
 The reason that this task was chosen was because all of us are gaming enthusiasts. Furthermore, Task 1 was to implement
 a web shop with a REST API server, similar to a previous assignment we had to solve. Thus, we chose this task to
 challenge ourselves and to cease the opportunity to learn new technologies.
+
 ---
 
 ### How to run our implementation:
