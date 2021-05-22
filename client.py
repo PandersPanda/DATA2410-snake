@@ -378,11 +378,11 @@ def submit_name(username, tkinter_objects):
     global snake
     global direction
 
-    if username == "":
+    if username.strip() == "":
         tkinter_objects[0].configure(text="Please enter a username")
         tkinter_objects[0].place(x=220, y=222)
         return
-    if len(username) > 15:
+    if len(username.strip()) > 15:
         tkinter_objects[0].configure(text="Enter a username that is under 15 characters")
         tkinter_objects[0].place(x=220, y=222)
         return
@@ -406,10 +406,10 @@ def establish_stub():
     with open('crt.pem', 'rb') as f:
         trusted_certs = f.read()
     credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
-    channel = grpc.intercept_channel(grpc.secure_channel(
+    channel = grpc.secure_channel(
         f'{host}:{port}',
         credentials,
-        options=(('grpc.ssl_target_name_override', hostname),)),
+        options=(('grpc.ssl_target_name_override', hostname),)
     )
     stub = snake_pb2_grpc.SnakeServiceStub(channel)
 
@@ -426,7 +426,6 @@ def on_closing():
 
 
 def show_index_page():
-    username_var = tkinter.StringVar()
     username_var = tkinter.StringVar()
 
     title_label = tkinter.Label(root, text='Username:', font=("bold", 20))
@@ -467,7 +466,6 @@ def show_index_page():
 
 
 def main():
-    # Get the determined game configurations from the server
     global GAME_CONFIGURATION
     global snake
     global direction
@@ -476,7 +474,7 @@ def main():
     parser.add_argument('-b', '--bot', action='store_true', help='Run client as a bot')
     arguments = parser.parse_args()
 
-    establish_stub()  # Establish stub, own function for later modifications if necessary
+    establish_stub()
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
     try:
         GAME_CONFIGURATION = stub.GetGameConfigurations(snake_pb2.GetRequest())
@@ -484,7 +482,6 @@ def main():
         sys.exit(f'Cannot establish communication with server at {host}:{port}.\n'
                  f'Make sure that the game server is up and running.\n')
 
-    # Set root window size and disable resizing
     root.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
     root.resizable(False, False)
     root.title('Snake Game')
@@ -492,7 +489,6 @@ def main():
     label1 = tkinter.Label(root, image=bg)
     label1.place(x=0, y=100)
 
-    # Index page:
     if arguments.bot:
         snake = stub.JoinGame(snake_pb2.JoinRequest(is_bot=True))
         direction = snake.direction
@@ -501,7 +497,6 @@ def main():
         show_index_page()
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
-    # Run mainloop
     root.mainloop()
 
 
