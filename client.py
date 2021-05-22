@@ -480,9 +480,9 @@ def main():
     assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
     try:
         GAME_CONFIGURATION = stub.GetGameConfigurations(snake_pb2.GetRequest())
-    except grpc.RpcError as e:
-        sys.exit(f'Cannot establish communication with server at {host}:{port}\n'
-                 f'Make sure that the game server container is up and running')
+    except grpc.RpcError:
+        sys.exit(f'Cannot establish communication with server at {host}:{port}.\n'
+                 f'Make sure that the game server is up and running.\n')
 
     # Set root window size and disable resizing
     root.geometry(f'{GAME_CONFIGURATION.window_width}x{GAME_CONFIGURATION.window_height}')
