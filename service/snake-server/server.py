@@ -6,7 +6,6 @@ import grpc
 from concurrent import futures
 import random
 import json
-import mysql.connector
 import signal
 
 
@@ -214,27 +213,9 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
         scores.sort(key=lambda x: x.score, reverse=True)  # Sort list in descending order
         return ScoreResponse(scores=scores)
 
-    def GetHighScores(self, request, context):
-        cnxn = mysql.connector.connect(**self.config)
-
-        cursor = cnxn.cursor()
-        cursor.execute("USE snake_highscores")
-        cursor.execute("SELECT username, score FROM highscores "
-                       "ORDER BY score DESC")
-        out = cursor.fetchall()
-        high_scores = []
-        for row in out:
-            high_scores.append(Score(name=row[0], score=row[1]))
-
-        cursor.close()
-        cnxn.close()
-        return ScoreResponse(scores=high_scores)
-
     def turn_snake_to_food(self, snake):
         self.FOODS.extend(random.sample(snake.body, len(snake.body) // 3))
         snake = self.SNAKES.pop(snake.name, None)
-        if not snake.is_bot:
-            self.update_highscore(snake)
         self.AVAILABLE_COLORS.append(snake.color)
         if snake.is_bot:
             self.BOT_NAMES.append(snake.name)
@@ -255,42 +236,6 @@ class SnakeService(snake_pb2_grpc.SnakeServiceServicer):
 
         self.FOODS.append(p)
         return p
-
-    def update_highscore(self, snake):
-        cnxn = mysql.connector.connect(**self.config)
-        cursor = cnxn.cursor(buffered=True)
-        cursor.execute("USE snake_highscores")
-
-        # Create table if the table doesn't exists:
-        cursor.execute(
-            "CREATE TABLE IF NOT EXISTS highscores "
-            "("
-            "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, "
-            "username VARCHAR(30) NOT NULL, "
-            "score int(6)"
-            ")"
-        )
-
-        # Check if username exists in table
-        cursor.execute(
-            f"SELECT username, score FROM highscores "
-            f"WHERE username = '{snake.name}'"
-        )
-        out = cursor.fetchall()
-        score = len(snake.body) - 3
-        if len(out) > 0:
-            if score > out[0][1]:  # Update highscore if user got a new high score
-                query = "UPDATE highscores SET score=%s WHERE username=%s"
-                data = (score, snake.name)
-                cursor.execute(query, data)
-                cnxn.commit()
-        else:  # User does not exists
-            query = "INSERT INTO highscores(username, score) VALUES (%s, %s)"
-            data = (snake.name, score)
-            cursor.execute(query, data)
-            cnxn.commit()
-        cursor.close()
-        cnxn.close()
 
 
 def serve():

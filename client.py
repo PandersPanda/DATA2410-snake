@@ -36,10 +36,6 @@ def show_high_scores():
 
     high_score_list = tkinter.Listbox(high_score_window, height=15, width=25,
                                       font="bold")
-    assert isinstance(stub, snake_pb2_grpc.SnakeServiceStub)
-    high_scores = stub.GetHighScores(snake_pb2.GetRequest())
-    for i, score in enumerate(high_scores.scores):
-        high_score_list.insert(i, f" {i + 1}. {score.name}: {score.score} points")
 
     high_score_list.place(x=175, y=200)
 
